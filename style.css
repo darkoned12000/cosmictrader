@@ -1,0 +1,534 @@
+/* --- Styles --- */
+body {
+    font-family: monospace;
+    background: #111;
+    color: #0f0;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#title-banner {
+    border: 2px solid #0f0;
+    background: #222;
+    text-align: center;
+    padding: 10px;
+}
+
+#title-banner pre {
+    margin: 0;
+    line-height: 1;
+    color: #0f0;
+    font-size: 10px;
+}
+
+#main-ui {
+    display: flex;
+    gap: 20px;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+}
+
+#left-column, #right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#left-column {
+    flex: 0 0 280px;
+}
+
+#right-column {
+    flex: 0 0 300px;
+}
+
+#center-column {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 500px;
+}
+
+#ship-status, #game-controls, #inventory, #interaction, #galaxy-map, #game-console, #space-port-actions, #info-feed {
+    border: 1px solid #0f0;
+    padding: 10px;
+    background: #222;
+}
+
+h3 {
+    margin: 0 0 10px 0;
+    color: #0f0;
+    border-bottom: 1px solid #0f0;
+    padding-bottom: 5px;
+    font-size: 14px;
+}
+
+#info-feed-content {
+    white-space: pre-wrap;
+    line-height: 1.3;
+    font-size: 12px;
+}
+
+#info-feed-content strong {
+    color: #0f0;
+    display: inline-block;
+    width: 120px;
+}
+
+#ship-info, #inv-info {
+    line-height: 1.4;
+    padding: 5px;
+    font-size: 12px;
+}
+
+#ship-info div, #inv-info div {
+    margin-bottom: 5px;
+}
+
+#galaxy-map {
+    border: 1px solid #0f0;
+    padding: 10px;
+    /* background: url('galaxy-bg.jpg'); */
+    background-color: #1a1a1a;
+    position: relative;
+}
+
+#map-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+#map-display {
+    margin: 0;
+    line-height: 1;
+    white-space: pre;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px;
+    display: inline-block;
+    color: #0f0;
+    border: 1px dashed #050;
+    min-width: 400px;
+}
+
+#map-legend {
+    flex: 0 0 150px;
+    color: #0f0;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 5px;
+    border: 1px dashed #050;
+}
+
+#map-legend h4 {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    text-align: center;
+}
+
+#map-legend p {
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+/* Styles for the game console */
+#game-console {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 180px; /* Set a max height for console */
+    font-size: 12px;
+    line-height: 1.4;
+    scrollbar-width: thin; /* For Firefox */
+    scrollbar-color: #0f0 #111; /* For Firefox: thumb color, track color */
+}
+
+#game-console h3 {
+	margin-bottom: 5px;
+}
+
+#console-messages {
+    white-space: pre-wrap; /* This tells the browser to respect newline characters */
+    /* Inherits other styles from #game-console like font-size, line-height, color */
+}
+
+/* WebKit (Chrome, Safari, Edge) scrollbar for console */
+#game-console::-webkit-scrollbar {
+    width: 8px;
+}
+
+#game-console::-webkit-scrollbar-track {
+    background: #111;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+}
+
+#game-console::-webkit-scrollbar-thumb {
+    background: #0f0;
+    border: 1px solid #0a0;
+    border-radius: 5px;
+}
+
+#game-console::-webkit-scrollbar-thumb:hover {
+    background: #0a0;
+}
+
+#game-console::-webkit-scrollbar-button {
+    background: #111;
+    border: 1px solid #0f0;
+    color: #0f0;
+}
+
+
+#space-port-actions {
+    display: none; /* This will be controlled by JS */
+    overflow-y: auto;
+    max-height: 350px;
+}
+
+#space-manual {
+    border: 1px solid #0f0;
+    padding: 10px;
+    background: #222;
+    text-align: left; /* Center the button */
+}
+
+#space-manual button {
+    /* Inherits general button styles */
+     margin: 0 auto; /* Further ensure centering */
+     display: block; /* Make button a block element for margin auto to work */
+}
+
+#interaction-display {
+    line-height: 1;
+    white-space: pre-wrap;
+    margin-bottom: 10px;
+    text-align: center;
+    /* Center ASCII/Image */
+}
+
+.interaction-image {
+    max-width: 100%;
+    max-height: 150px;
+    display: block;
+    margin: 0 auto 10px auto;
+    border: 1px solid #050;
+}
+
+#interaction-controls p {
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+/* Add margin */
+#interaction-controls hr {
+    border: none;
+    border-top: 1px dashed #050;
+    margin: 10px 0;
+}
+
+#interaction-controls div {
+    margin-bottom: 5px;
+}
+
+/* Space between activity buttons */
+#interaction-controls pre {
+    margin: 0;
+    line-height: 1.2;
+}
+
+/* Style for stock info */
+#space-port-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#space-port-controls > div {
+    border-top: 1px dashed #030;
+    padding-top: 10px;
+    margin-top: 5px;
+}
+
+/* Add lines between sections */
+#space-port-controls > div:first-child {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+}
+
+/* No line above first */
+
+/* Scrollbar styles for #space-port-actions (existing) */
+#space-port-actions {
+    overflow-y: auto;
+    max-height: 350px;
+    scrollbar-width: thin;
+    scrollbar-color: #0f0 #111;
+}
+
+#space-port-actions::-webkit-scrollbar {
+    width: 8px;
+}
+
+#space-port-actions::-webkit-scrollbar-track {
+    background: #111;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+}
+
+#space-port-actions::-webkit-scrollbar-thumb {
+    background: #0f0;
+    border: 1px solid #0a0;
+    border-radius: 5px;
+}
+
+#space-port-actions::-webkit-scrollbar-thumb:hover {
+    background: #0a0;
+}
+
+#space-port-actions::-webkit-scrollbar-button {
+    background: #111;
+    border: 1px solid #0f0;
+    color: #0f0;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+button {
+    background: #0f0;
+    color: #111;
+    border: 1px solid #0a0;
+    padding: 8px 12px;
+    cursor: pointer;
+    margin: 3px;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+button:hover {
+    background: #0a0;
+    border-color: #0f0;
+}
+
+button:disabled {
+    background: #555;
+    color: #999;
+    border-color: #444;
+    cursor: not-allowed;
+}
+
+button:disabled:hover {
+    background: #555;
+}
+
+select, input[type="number"], input[type="text"] {
+    background: #222;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 5px;
+    margin: 0 5px 5px 0;
+    font-family: monospace;
+    box-sizing: border-box;
+}
+
+select:disabled, input:disabled {
+    background: #555;
+    color: #999;
+    cursor: not-allowed;
+    border-color: #555;
+}
+
+label {
+    margin-right: 5px;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+#game-controls div {
+    margin-bottom: 5px;
+}
+
+#game-controls hr {
+    border: none;
+    border-top: 1px dashed #050;
+    margin: 10px 0;
+}
+
+#game-controls .audio-setting {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+#game-controls .audio-setting label {
+    flex-basis: 90px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 5px;
+}
+
+#game-controls input[type="range"] {
+    flex-grow: 1;
+    min-width: 80px;
+    height: 8px;
+    background: #111;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+    cursor: pointer;
+    vertical-align: middle;
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 0;
+}
+
+#game-controls input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: #0f0;
+    border: 1px solid #0a0;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -5px;
+}
+
+#game-controls input[type="range"]::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #0f0;
+    border: 1px solid #0a0;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+#game-controls input[type="range"]::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    background: #111;
+    border: 1px solid #0f0;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#game-controls select {
+    flex-grow: 1;
+    min-width: 100px;
+}
+
+#game-controls .audio-setting span {
+    font-size: 10px;
+    min-width: 35px;
+    text-align: right;
+}
+
+#game-controls input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #111;
+    margin: 0;
+    font: inherit;
+    color: #0f0;
+    width: 1.15em;
+    height: 1.15em;
+    border: 0.15em solid currentcolor;
+    border-radius: 0.15em;
+    transform: translateY(-0.075em);
+    display: inline-grid;
+    place-content: center;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+#game-controls input[type="checkbox"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    transform: scale(0);
+    transition: 100ms transform ease-in-out;
+    box-shadow: inset 1em 1em #0f0;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+#game-controls input[type="checkbox"]:checked::before {
+    transform: scale(1);
+}
+
+#game-controls input[type="checkbox"]:focus {
+    outline: max(2px, 0.15em) solid #0a0;
+    outline-offset: max(2px, 0.1em);
+}
+
+#game-controls .loop-label {
+    flex-basis: auto !important;
+    text-align: left !important;
+    padding-right: 10px;
+}
+
+/* --- Styles for game console messages --- */
+.console-message {
+    /* Base styling for all console messages if needed */
+    /* line-height and font-size are inherited from #game-console */
+    /* white-space: pre-wrap; is on #console-messages (parent) which is fine */
+}
+
+.console-message-neutral {
+    color: #0f0; /* Default green */
+}
+
+.console-message-info { /* For initialization, general info */
+    color: #30a0ff; /* Light Blue */
+}
+
+.console-message-error { /* For damage, critical errors */
+    color: #ff4040; /* Red */
+}
+
+.console-message-warning { /* For virus infections, low fuel, non-critical failures */
+    color: #ffae42; /* Orange */
+}
+
+.console-message-success { /* For successful actions like purchases, upgrades */
+    color: #76ff03; /* Lime Green */
+}
+
+.console-message-minor { /* Minor informational msgs the player should know */
+    color: #FFFFE0; /* Light Yellow */
+}
+
+/* --- Styles for Lottery Input Digits --- */
+.lottery-input-digit {
+    background: #111; /* Dark background to match theme */
+    color: #0f0;       /* Green text */
+    border: 1px solid #0f0; /* Green border */
+    width: 35px;      /* Slightly wider for better visibility */
+    height: 35px;     /* Taller for better visibility */
+    text-align: center;
+    font-size: 20px;  /* Larger font for the digit */
+    font-family: monospace;
+    margin: 2px 4px;  /* Adjust margin as needed */
+    caret-color: #0f0; /* Green cursor/caret */
+}
+
+/* Hide spinners/arrows for WebKit browsers (Chrome, Safari, Edge, Opera) */
+.lottery-input-digit::-webkit-outer-spin-button,
+.lottery-input-digit::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* Also important */
+}
+
+/* Hide spinners/arrows for Firefox */
+.lottery-input-digit[type=number] {
+    -moz-appearance: textfield; /* Important for Firefox */
+}

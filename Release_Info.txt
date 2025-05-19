@@ -1,0 +1,15 @@
+Development and Patch Info:
+---------------------------
+v0.13 - 'Inquire Purchase' option is now working with ports
+v0.12 - 'Play Lottery' mechanics working
+v0.11 - Added port activities. Got 'Steal Resources' and 'Hack Credits' working
+v0.10 - Worked on Port mechanics, added 'Stock Status'
+v0.09 - Created the 'Computer Console', shows all actions
+v0.08 - Added 'Space Manual' will grow this later
+v0.07 - Added a legend (needs to expand later)
+v0.06 - Working on 'Interaction' section added ports/planets/star images
+v0.05 - Created 'Game Controls' section
+v0.04 - Added ship types, equipment for your ship
+v0.03 - Added Ports/Planets, worked on very basic trading and Space Port options
+v0.02 - Player Inventory / Sector Info
+v0.01 - Started Development :). Got the UI setup and got basic grid movement running
