@@ -1,11 +1,22 @@
 // --- Ship Class Definition ---
 class Ship {
-    constructor(ship_id, ship_name, faction, ship_class,
-                max_shields, current_shields,
-                max_hull, current_hull,
-                fighter_squadrons = 0, missile_launchers = 0,
-                image_path = "assets/images/ships/placeholder.png",
-                x_pos = 0, y_pos = 0, bounty = 0) {
+    constructor(
+        ship_id,
+        ship_name,
+        faction,
+        ship_class,
+        max_shields,
+        current_shields,
+        max_hull,
+        current_hull,
+        fighter_squadrons = 0,
+        missile_launchers = 0,
+        image_path = "assets/images/ships/placeholder.png",
+        x_pos = 0,
+        y_pos = 0,
+        bounty = 0,
+        captain_name = 'Unknown',
+        kills = 0) {
 
         this.ship_id = ship_id;          // Unique identifier
         this.ship_name = ship_name;      // Display name
@@ -27,6 +38,8 @@ class Ship {
         this.x_pos = x_pos;
         this.y_pos = y_pos;
 		this.bounty = bounty;
+        this.captain_name = captain_name;
+        this.kills = kills;
 
         // State for Player Interaction (specifically for NPCs)
         this.is_scanned_by_player = false;
@@ -79,16 +92,16 @@ const SHIP_CLASS_CAPITAL = "Capital Ship";
 // Structure: [max_shields_range, max_hull_range, fighters_range, missiles_range, image_prefix_list]
 const NPC_ARCHETYPES = {
     [FACTION_TRADER]: {
-        [SHIP_CLASS_FREIGHTER]: [[50, 150], [100, 250], [0, 1], [0, 2], ["trader_freighter"]],
-        [SHIP_CLASS_SCOUT]: [[30, 80], [50, 100], [0, 0], [0, 1], ["trader_scout"]]
+        [SHIP_CLASS_FREIGHTER]: [[50, 150], [100, 250], [0, 1], [0, 2], ["trader_freighter_A"]],
+        [SHIP_CLASS_SCOUT]: [[30, 80], [50, 100], [0, 0], [0, 1], ["trader_scout_A"]]
     },
     [FACTION_DURAN]: {
-        [SHIP_CLASS_ESCORT]: [[100, 250], [150, 300], [1, 3], [2, 6], ["duran_escort_varA", "duran_escort_varB"]],
-        [SHIP_CLASS_CRUISER]: [[250, 500], [300, 600], [2, 5], [4, 10], ["duran_cruiser"]]
+        [SHIP_CLASS_ESCORT]: [[100, 250], [150, 300], [1, 3], [2, 6], ["duran_escort_A", "duran_escort_B"]],
+        [SHIP_CLASS_CRUISER]: [[250, 500], [300, 600], [2, 5], [4, 10], ["duran_cruiser_A", "duran_cruiser_B"]]
     },
     [FACTION_VINARI]: {
-        [SHIP_CLASS_SCOUT]: [[70, 180], [90, 200], [0, 2], [1, 4], ["vinari_scout"]],
-        [SHIP_CLASS_CRUISER]: [[300, 550], [320, 650], [3, 6], [5, 12], ["vinari_cruiser_sleek", "vinari_cruiser_heavy"]]
+        [SHIP_CLASS_SCOUT]: [[70, 180], [90, 200], [0, 2], [1, 4], ["vinari_scout_A", "vinari_scout_B"]],
+        [SHIP_CLASS_CRUISER]: [[300, 550], [320, 650], [3, 6], [5, 12], ["vinari_cruiser_A", "vinari_cruiser_B"]]
     }
 };
 
@@ -123,7 +136,18 @@ function getNextShipId() {
     return newId;
 }
 
-// --- Main NPC Generation Function ---
+// --- Main NPC Name Generation Function ---
+function generateNpcIdentity(faction, ship_class) {
+    const captainFirstName = getRandomElement(FIRST_NAMES);
+    const captainLastName = (Math.random() < 0.8) ? getRandomElement(LAST_NAMES) : ""; // 80% chance of having a last name
+    const captainName = `${captainFirstName} ${captainLastName}`.trim();
+
+    const shipName = generateShipName(faction, ship_class); // We can still use the old function for the ship name
+
+    return { captainName, shipName };
+}
+
+// --- Main NPC Ship Generation Function ---
 function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_pos_param = 0) {
     if (!NPC_ARCHETYPES[faction]) {
         console.warn(`Warning: Faction '${faction}' not found in NPC_ARCHETYPES. Cannot create ship.`);
@@ -152,10 +176,10 @@ function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_p
 
     const ship_id_num = getNextShipId();
     const ship_id = `${faction.toLowerCase()}_${chosen_class.toLowerCase()}_${ship_id_num}`;
-    const ship_name = generateShipName(faction, chosen_class);
+    const { captainName, shipName } = generateNpcIdentity(faction, chosen_class);
 
     const image_name_prefix = img_prefixes[Math.floor(Math.random() * img_prefixes.length)];
-    const image_path = `assets/images/ships/${faction.toLowerCase()}/${image_name_prefix}.png`;
+    const image_path = `Images/ships/${image_name_prefix}.png`;
 
     // Calculate bounty based on ship's potential threat/value
     let bountyValue = 0;
@@ -170,7 +194,7 @@ function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_p
 	
 	return new Ship(
         ship_id,
-        ship_name,
+        shipName,
         faction,
         chosen_class,
         max_shields,
@@ -182,7 +206,8 @@ function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_p
         image_path,
         x_pos_param, 
 		y_pos_param,
-		bountyValue
+		bountyValue,
+        captainName
     );
 }
 
