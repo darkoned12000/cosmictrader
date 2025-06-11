@@ -548,6 +548,39 @@ const soundEffects = {
     'message_system': 'Effects/snd_ui_tap.wav'
 };
 
+// --- Game Loop Intervals (How often checks occur) ---
+const GAME_LOOP_INTERVALS = {
+    incomeAndBuilding: 10, // Faction income and ship building every 10 turns
+    factionActionRoll: 5,  // Each faction rolls for an action every 5 turns
+    economicUpdates: 5     // Economic updates happen every 5 turns (already existing)
+};
+
+// --- Faction Action Probabilities (Per Faction, Per Action Roll) ---
+// These are the CHANCES a specific action will be attempted when it's that faction's turn to roll for an action.
+// The sum of probabilities for each faction should not exceed 1.0 (or just let higher values mean higher chance)
+const FACTION_ACTION_PROBABILITIES = {
+    [FACTION_DURAN]: {
+        invasion: 0.03,             // Base 3% chance per roll
+        economicSabotage: 0.02,     // Base 2% chance
+        militarySabotage: 0.02,     // Base 2% chance
+        shipSkirmish: 0.10,         // Base 10% chance
+        seizeIndependentPort: 0.03  // Base 3% chance
+    },
+    [FACTION_VINARI]: {
+        invasion: 0.03,
+        economicSabotage: 0.02,
+        militarySabotage: 0.02,
+        shipSkirmish: 0.10,
+        seizeIndependentPort: 0.03
+    },
+    [FACTION_TRADER]: {
+        invasion: 0.00,             // Traders don't do military invasions
+        economicSabotage: 0.08,     // Higher chance for economic sabotage
+        militarySabotage: 0.03,
+        shipSkirmish: 0.05,         // Lower chance for skirmishes
+        seizeIndependentPort: 0.15  // Higher chance for seizing independent ports
+    }
+};
 
 // -- MAYBE USE THIS LATER --
 //const npcShipNames = ["Bucket", "Stardust", "Runner", "Comet", "Nomad", "Griffin", "Hammer", "Wanderer", "Zephyr", "Goliath"];

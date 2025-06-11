@@ -624,12 +624,23 @@ function generateSpaceportServicesHTML() {
     h += `<div><p>Warp:</p><button onclick="triggerAction('buyWarpDrive')" ${!canBuyWarp?'disabled':''}>Install(${warpCost}cr)</button></div>`;
     // Buy Ship
     h += `<div><p>Ships(Trade:50%):</p><div class="button-group">`;
-    for (const sc in shipClasses) {
-        if (sc !== game.player.class) {
+    // Dynamically get Trader faction ship classes from NPC_ARCHETYPES
+    // Although NPCs are created from these archetypes, the archetypes contain the base ship names
+    // that are considered "Trader" ships for player purchase.
+    const traderShipArchetypes = NPC_ARCHETYPES[FACTION_TRADER];
+    const playerBuyableShipNames = [];
+    for (const shipClassKey in traderShipArchetypes) {
+        playerBuyableShipNames.push(traderShipArchetypes[shipClassKey][0]); // Get the base ship name (first element in archetype array)
+    }
+
+    for (const sc of playerBuyableShipNames) { // Loop only through player-buyable Trader ships
+        if (sc !== game.player.ship.name) { // Don't list the player's current ship (using ship.name for comparison)
             const ns = shipClasses[sc];
-            const { netCost } = calculateTradeIn(sc);
-            const canAfford = game.player.credits >= netCost;
-            h += `<button onclick="triggerAction('buyShip','${sc}')" ${canAfford?'':'disabled'}>Buy ${sc}(Net:${netCost}cr)</button>`;
+            if (ns) { // Ensure the ship class exists in game-data.js
+                const { netCost } = calculateTradeIn(sc);
+                const canAfford = game.player.credits >= netCost;
+                h += `<button onclick="triggerAction('buyShip','${sc}')" ${canAfford?'':'disabled'}>Buy ${sc}(Net:${netCost}cr)</button>`;
+            }
         }
     }
     h += `</div></div>`;

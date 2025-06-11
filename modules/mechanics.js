@@ -82,6 +82,71 @@ function handleHazardEntry(sector) {
     }
 }
 
+
+/**
+ * Handles an NPC's interaction with a hazardous sector.
+ * @param {object} npc - The NPC Ship object.
+ * @param {object} hazardData - The hazard data object.
+ * @returns {boolean} True if NPC was destroyed, false otherwise.
+ */
+function handleNpcHazardImpact(npc, hazardData) {
+    const hazardType = hazardData.hazardType;
+    let damage = 0;
+    let message = "";
+    let impactOccurred = true;
+
+    switch (hazardType) {
+        case 'Mine':
+            damage = getRandomInt(npc.max_hull * 0.05, npc.max_hull * 0.15); // 5-15% of max hull
+            message = `The ${npc.faction} vessel "${npc.ship_name}" hit an armed mine`;
+            // Remove the mine after it's triggered by an NPC too
+            const mineKey = `${hazardData.x},${hazardData.y}`;
+            if (game.map[mineKey] && game.map[mineKey].data === hazardData) {
+                delete game.map[mineKey];
+                game.hazards = game.hazards.filter(h => h !== hazardData);
+            }
+            break;
+        case 'Asteroid Field':
+            damage = getRandomInt(npc.max_hull * 0.01, npc.max_hull * 0.05); // 1-5% of max hull
+            message = `The ${npc.faction} vessel "${npc.ship_name}" took hits from an asteroid field`;
+            break;
+        case 'Black Hole':
+            damage = getRandomInt(npc.max_hull * 0.3, npc.max_hull * 0.6); // 30-60% of max hull
+            message = `The ${npc.faction} vessel "${npc.ship_name}" was caught in the gravitational pull of a black hole`;
+            break;
+        case 'Solar Storm':
+            damage = getRandomInt(npc.max_shields * 0.2, npc.max_shields * 0.4); // 20-40% of max shields
+            message = `The ${npc.faction} vessel "${npc.ship_name}" was battered by a solar storm`;
+            break;
+        case 'Nebula':
+            // Nebulae cause sensor interference, not direct damage to NPCs for now
+            impactOccurred = false; // No damage taken
+            break;
+        default:
+            impactOccurred = false; // Unknown hazards don't affect NPCs for now
+            break;
+    }
+
+    if (impactOccurred) {
+        const initialHull = npc.current_hull;
+        const initialShields = npc.current_shields;
+
+        npc.takeDamage(damage);
+
+        let damageReport = `(${npc.current_shields}/${npc.max_shields}S, ${npc.current_hull}/${npc.max_hull}H)`;
+
+        if (npc.current_hull <= 0) {
+            logGalaxyEvent(`${message} and was **destroyed**!`, 'conflict');
+            return true; // NPC was destroyed
+        } else {
+            logGalaxyEvent(`${message}, taking ${damage} damage. ${damageReport}`, 'warning');
+            return false; // NPC took damage but survived
+        }
+    }
+    return false; // No impact or no damage
+}
+
+
 function deployMine() {
     if (game.player.ship.mines > 0) {
         const key = `${game.player.x},${game.player.y}`;

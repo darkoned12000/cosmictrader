@@ -16,7 +16,10 @@ class Ship {
         y_pos = 0,
         bounty = 0,
         captain_name = 'Unknown',
-        kills = 0) {
+        kills = 0,
+        credits = 0,
+        inventory = { ore: 0, food: 0, tech: 0, minerals: 0, organics: 0, artifacts: 0 }
+    ) {
 
         this.ship_id = ship_id;          // Unique identifier
         this.ship_name = ship_name;      // Display name
@@ -44,6 +47,10 @@ class Ship {
         // State for Player Interaction (specifically for NPCs)
         this.is_scanned_by_player = false;
         // this.is_scanning_in_progress = false; // Best managed by UI/interaction handler
+
+        // NPC Economy properties
+        this.credits = credits;
+        this.inventory = inventory;
     }
 
     // Example method (you can add more as needed)
@@ -82,36 +89,48 @@ const FACTION_DURAN = "Duran";
 const FACTION_VINARI = "Vinari";
 // Add other factions as needed
 
+const SHIP_CLASS_INTERCEPTOR = "Interceptor";
 const SHIP_CLASS_FREIGHTER = "Freighter";
-const SHIP_CLASS_ESCORT = "Escort";
-const SHIP_CLASS_SCOUT = "Scout";
+const SHIP_CLASS_FRIGATE = "Frigate";
 const SHIP_CLASS_CRUISER = "Cruiser";
+const SHIP_CLASS_EXPLORATION = "Exploration";
+const SHIP_CLASS_BATTLESHIP = "Battleship";
 const SHIP_CLASS_CAPITAL = "Capital Ship";
 
 // --- NPC Generation Parameters ---
 // Structure: [max_shields_range, max_hull_range, fighters_range, missiles_range, image_prefix_list]
 const NPC_ARCHETYPES = {
     [FACTION_TRADER]: {
-        [SHIP_CLASS_FREIGHTER]: [[50, 150], [100, 250], [0, 1], [0, 2], ["trader_freighter_A"]],
-        [SHIP_CLASS_SCOUT]: [[30, 80], [50, 100], [0, 0], [0, 1], ["trader_scout_A"]]
+        [SHIP_CLASS_INTERCEPTOR]: ["Starhawk Skiff", [0.9, 1.1], [0.9, 1.1], [0, 1], [0, 2], ["trader_scout_A"]],
+        [SHIP_CLASS_FREIGHTER]: ["Bargemaster Dray", [0.9, 1.1], [0.9, 1.1], [0, 0], [0, 0], ["trader_freighter_A"]],
+        [SHIP_CLASS_EXPLORATION]: ["Wayfinder Scout", [0.9, 1.1], [0.9, 1.1], [0, 0], [0, 1], ["trader_scout_A"]],
+        [SHIP_CLASS_BATTLESHIP]: ["Corsair Reaver", [0.9, 1.1], [0.9, 1.1], [1, 3], [2, 6], ["duran_cruiser_A"]],
+        [SHIP_CLASS_CAPITAL]: ["Tradebaron Citadel", [0.9, 1.1], [0.9, 1.1], [2, 5], [4, 10], ["duran_cruiser_B"]]
     },
     [FACTION_DURAN]: {
-        [SHIP_CLASS_ESCORT]: [[100, 250], [150, 300], [1, 3], [2, 6], ["duran_escort_A", "duran_escort_B"]],
-        [SHIP_CLASS_CRUISER]: [[250, 500], [300, 600], [2, 5], [4, 10], ["duran_cruiser_A", "duran_cruiser_B"]]
+        [SHIP_CLASS_INTERCEPTOR]: ["Skarva Fang", [0.9, 1.1], [0.9, 1.1], [1, 2], [1, 3], ["duran_escort_A"]],
+        [SHIP_CLASS_FREIGHTER]: ["Gorath Vault", [0.9, 1.1], [0.9, 1.1], [0, 1], [0, 1], ["trader_freighter_A"]],
+        [SHIP_CLASS_EXPLORATION]: ["Vrenix Probe", [0.9, 1.1], [0.9, 1.1], [0, 0], [0, 1], ["trader_scout_A"]],
+        [SHIP_CLASS_BATTLESHIP]: ["Kravos Rend", [0.9, 1.1], [0.9, 1.1], [2, 4], [3, 8], ["duran_cruiser_A"]],
+        [SHIP_CLASS_CAPITAL]: ["Drenkar Monolith", [0.9, 1.1], [0.9, 1.1], [3, 6], [5, 12], ["duran_cruiser_B"]]
     },
     [FACTION_VINARI]: {
-        [SHIP_CLASS_SCOUT]: [[70, 180], [90, 200], [0, 2], [1, 4], ["vinari_scout_A", "vinari_scout_B"]],
-        [SHIP_CLASS_CRUISER]: [[300, 550], [320, 650], [3, 6], [5, 12], ["vinari_cruiser_A", "vinari_cruiser_B"]]
+        [SHIP_CLASS_INTERCEPTOR]: ["Sylvara Wisp", [0.9, 1.1], [0.9, 1.1], [0, 1], [0, 2], ["vinari_scout_A"]],
+        [SHIP_CLASS_FREIGHTER]: ["Elythar Caravan", [0.9, 1.1], [0.9, 1.1], [0, 0], [0, 0], ["trader_freighter_A"]],
+        [SHIP_CLASS_EXPLORATION]: ["Zynara Veil", [0.9, 1.1], [0.9, 1.1], [0, 0], [0, 1], ["vinari_scout_B"]],
+        [SHIP_CLASS_BATTLESHIP]: ["Auralis Thorn", [0.9, 1.1], [0.9, 1.1], [3, 6], [5, 12], ["vinari_cruiser_A"]],
+        [SHIP_CLASS_CAPITAL]: ["Celestryn Spire", [0.9, 1.1], [0.9, 1.1], [3, 6], [5, 12], ["vinari_cruiser_B"]]
     }
 };
 
 // --- Name Generation (Simple Examples) ---
-const TRADER_PREFIXES = ["Star", "Void", "Trade", "Far", "Quick", "Reliant"];
-const TRADER_SUFFIXES = ["Runner", "Hauler", "Jumper", "Voyager", "Drifter", "Bringer"];
-const DURAN_ADJECTIVES = ["Iron", "Steel", "Valiant", "Stern", "Guardian"];
-const DURAN_NOUNS = ["Hammer", "Shield", "Fist", "Spear", "Bulwark"];
-const VINARI_ELEMENTS = ["Nova", "Quasar", "Pulsar", "Nebula", "Comet"];
-const VINARI_CONCEPTS = ["Whisper", "Echo", "Thought", "Glimpse", "Current"];
+const TRADER_PREFIXES = ["Profit", "Gilded", "Swift", "Hustle", "Bargain", "Rogue", "Coin", "Venture", "Grubby", "Sly","Nifty", "Clever", "Dusty", "Lucky", "Shady", "Bold", "Thrifty", "Glint", "Hawk", "Rust"];
+const TRADER_SUFFIXES = ["Gambit", "Freight", "Skimmer", "Hustler", "Bounty", "Deal", "Cartel", "Prospector", "Swindle", "Rig", "Trawler", "Barge", "Dash", "Stash", "Venture", "Crate", "Haggle", "Drift", "Score", "Jolt"];
+const DURAN_ADJECTIVES = ["Bloodforge", "Ironclad", "Grimscale", "Warborn", "Ashen", "Furywrought", "Skullrend", "Vilethorn", "Dreadforge", "Blighted", "Stonefang", "Deathforge", "Ragescale", "Ironspike", "Gloomcarved", "Wrathborn", "Sableclaw", "Vexforge"];
+const DURAN_NOUNS = ["Claw", "Maw", "Talon", "Anvil", "Pyre", "Gore", "Spike", "Crag", "Doom", "Forge", "Rend", "Horn", "Fang", "Slaughter", "Chasm", "Viper", "Bane", "Crest"];
+const VINARI_ELEMENTS = ["Aetherial", "Starwoven", "Glimmering", "Voidtouched", "Celestine", "Luminant", "Nebulous", "Ecliptic", "Aurorant", "Stellarine", "Cosmic", "Radiant", "Ethereal", "Starlit", "Vaporous", "Crystalline", "Nebulite", "Astral"];
+const VINARI_CONCEPTS = ["Shimmer", "Pulse", "Chime", "Drift", "Gleam", "Sigh", "Flux", "Ripple", "Haze", "Sylph", "Glimmer", "Whirl", "Glow", "Wisp", "Echo", "Tide", "Mist", "Flare"];
+
 
 function generateShipName(faction, ship_class) {
     let name = `Unnamed ${ship_class}`;
@@ -161,16 +180,23 @@ function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_p
     }
 
     let chosen_class = specific_ship_class && available_classes.includes(specific_ship_class) ?
-                       specific_ship_class :
-                       available_classes[Math.floor(Math.random() * available_classes.length)];
+    specific_ship_class :
+    available_classes[Math.floor(Math.random() * available_classes.length)];
 
     const archetype = NPC_ARCHETYPES[faction][chosen_class];
-    const [max_s_range, max_h_range, f_range, m_range, img_prefixes] = archetype;
+    const [ship_name_template, max_s_mod_range, max_h_mod_range, f_range, m_range, img_prefixes] = archetype;
+
+    const baseShipStats = shipClasses[ship_name_template];
+    if (!baseShipStats) {
+        console.warn(`Warning: Ship template '${ship_name_template}' not found in shipClasses. Cannot create NPC.`);
+        return null;
+    }
 
     const randomIntInRange = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const randomFloatInRange = (min, max) => (Math.random() * (max - min)) + min;
 
-    const max_shields = randomIntInRange(max_s_range[0], max_s_range[1]);
-    const max_hull = randomIntInRange(max_h_range[0], max_h_range[1]);
+    const max_shields = Math.floor(baseShipStats.maxShields * randomFloatInRange(max_s_mod_range[0], max_s_mod_range[1]));
+    const max_hull = Math.floor(baseShipStats.maxHull * randomFloatInRange(max_h_mod_range[0], max_h_mod_range[1]));
     const fighters = randomIntInRange(f_range[0], f_range[1]);
     const missiles = randomIntInRange(m_range[0], m_range[1]);
 
@@ -181,18 +207,14 @@ function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_p
     const image_name_prefix = img_prefixes[Math.floor(Math.random() * img_prefixes.length)];
     const image_path = `Images/ships/${image_name_prefix}.png`;
 
-    // Calculate bounty based on ship's potential threat/value
-    let bountyValue = 0;
-    if (faction === FACTION_DURAN || faction === FACTION_VINARI) {
-        // Base bounty on stats, more for tougher ships
-        bountyValue = Math.floor((max_shields / 2 + max_hull / 3 + fighters * 25 + missiles * 60) / 10) * 10;
-        bountyValue = Math.max(50, bountyValue); // Minimum bounty for hostiles
-    } else if (faction === FACTION_TRADER) {
-        bountyValue = getRandomInt(20, 150); // Traders might carry some petty cash or small valuable cargo manifest
+    let bountyValue = Math.floor((max_shields / 2 + max_hull / 3 + fighters * 25 + missiles * 60) / 10) * 10;
+    bountyValue = Math.max(50, bountyValue);
+    if (faction === FACTION_TRADER) {
+        bountyValue = getRandomInt(20, 150);
     }
-    bountyValue = Math.max(0, bountyValue); // Ensure bounty is not negative
-	
-	return new Ship(
+    bountyValue = Math.max(0, bountyValue);
+
+    return new Ship(
         ship_id,
         shipName,
         faction,
@@ -204,14 +226,14 @@ function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_p
         fighters,
         missiles,
         image_path,
-        x_pos_param, 
-		y_pos_param,
-		bountyValue,
-        captainName
+        x_pos_param,
+        y_pos_param,
+        bountyValue,
+        captainName,
+        0, // kills - NPCs start with 0 kills
+        getRandomInt(500, 2000), // credits - NPCs start with 0 credits for Phase 1 as per roadmap
+        { ore: 0, food: 0, tech: 0, minerals: 0, organics: 0, artifacts: 0 } // inventory - NPCs start with empty inventory for Phase 1
     );
 }
 
-// --- Make functions and classes available if you are using modules (optional advanced setup) ---
-// If you decide to use ES6 modules later, you might add:
-// export { Ship, FACTION_TRADER, createNpcShip, /* etc. */ };
-// For now, since you're likely using simple <script> tags, they'll be globally available.
+

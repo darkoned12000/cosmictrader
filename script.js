@@ -49,6 +49,7 @@ const game = {
     solarArrayIntervalId: null,
     simulationIntervalId: null,
     isSimulationRunning: false,
+    nextEconomicEventTurn: 0,
 	lottery: {
         isActive: false,        // Is the lottery UI currently displayed?
         stage: 'pick',          // Current stage: 'pick', 'drawing', 'results'
@@ -97,7 +98,7 @@ const ui = {
 
 // ---------------------------
 // --- GAME INITIALIZATION ---
-function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShipName = 'Starhawk Skiff') {
+function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShipName = 'Starhawk I') {
     console.log("Init Game...");
 
 
@@ -179,7 +180,7 @@ function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShip
         capacity: startPortCapacity,
         stock: { ...startPortCapacity },
         securityLevel: getRandomInt(5, 8),
-        credits: getRandomInt(50000, 200000),
+        credits: getRandomInt(500000, 2000000),
         image_path: getRandomImage(spacePortImages),
         isStation: true,
         ship_name: "Starbase Prime",
@@ -275,7 +276,8 @@ function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShip
 
                 objectData = {
                     x, y, type: obj.type, // 'port' or 'spacePort'
-                    name: `${isSpacePort ? 'Starbase' : 'Port'} ${x},${y}`,
+                    name: isSpacePort ? getRandomElement(SPACE_PORT_NAMES) :
+                        `${getRandomElement(PORT_PREFIXES)} ${getRandomElement(PORT_SUFFIXES)} ${getRandomInt(1, 99)}`,
                     prices: { ore: getRandomInt(50, 100), food: getRandomInt(20, 50), tech: getRandomInt(100, 300) },
                     capacity: portCap,
                     stock: { ...portCap },
@@ -506,9 +508,65 @@ function loadGame(playerName) {
         const playerData = accounts[playerName.toLowerCase()];
         if (playerData && playerData.gameState) {
             const loadedState = playerData.gameState;
-            // You already have rehydration logic, which would be called here.
-            // For now, we'll just assign the state.
+            // Assign loaded state properties. This brings in plain objects for NPCs.
             Object.assign(game, deepClone(loadedState));
+
+            // --- REHYDRATE NPC SHIP OBJECTS ---
+            // Convert plain NPC objects back into Ship instances to restore their methods
+            game.npcs = game.npcs.map(npcData => {
+                // Ensure all properties needed by the Ship constructor are passed
+                return new Ship(
+                    npcData.ship_id,
+                    npcData.ship_name,
+                    npcData.faction,
+                    npcData.ship_class,
+                    npcData.max_shields,
+                    npcData.current_shields,
+                    npcData.max_hull,
+                    npcData.current_hull,
+                    npcData.fighter_squadrons,
+                    npcData.missile_launchers,
+                    npcData.image_path,
+                    npcData.x_pos,
+                    npcData.y_pos,
+                    npcData.bounty,
+                    npcData.captain_name,
+                    npcData.kills,
+                    npcData.credits || 0, // Default to 0 if not present in old save
+                    npcData.inventory || { ore: 0, food: 0, tech: 0, minerals: 0, organics: 0, artifacts: 0 } // Default to empty if not present
+                );
+            });
+
+            // Rehydrate deceasedNpcs array if it also stores Ship objects
+            game.deceasedNpcs = game.deceasedNpcs.map(npcData => {
+                return new Ship(
+                    npcData.ship_id,
+                    npcData.ship_name,
+                    npcData.faction,
+                    npcData.ship_class,
+                    npcData.max_shields,
+                    npcData.current_shields,
+                    npcData.max_hull,
+                    npcData.current_hull,
+                    npcData.fighter_squadrons,
+                    npcData.missile_launchers,
+                    npcData.image_path,
+                    npcData.x_pos,
+                    npcData.y_pos,
+                    npcData.bounty,
+                    npcData.captain_name,
+                    npcData.kills,
+                    npcData.credits || 0,
+                    npcData.inventory || { ore: 0, food: 0, tech: 0, minerals: 0, organics: 0, artifacts: 0 }
+                );
+            });
+
+            // Rehydrate ports/spaceports if they have takeDamage/getShieldPercentage/getHullPercentage methods
+            // These are handled by specific objectData.takeDamage in initGame, but not proper classes.
+            // If any 'port' or 'spacePort' could be the game.inCombatWith target and needed methods,
+            // their methods would also need re-assigning if they were lost during serialization.
+            // For now, focusing on NPCs as per the error.
+
             displayConsoleMessage(`Welcome back, ${game.player.firstName}. Game data loaded.`);
             startGame();
         } else {
@@ -588,8 +646,22 @@ function move(direction) {
 
         const sector = game.map[`${nX},${nY}`]; // Get sector info for checks
 
-        if (game.moveCount > 0 && game.moveCount % 25 === 0) { // Every 25 moves
-            processFactionTurns();
+        // --- NEW PERIODIC UPDATES BASED ON GAME_LOOP_INTERVALS ---
+        if (game.moveCount % GAME_LOOP_INTERVALS.incomeAndBuilding === 0) {
+            processFactionIncomeAndBuilding(); // New function for income & building
+        }
+        if (game.moveCount % GAME_LOOP_INTERVALS.factionActionRoll === 0) {
+            // Each faction rolls for an action individually
+            for (const faction of [FACTION_DURAN, FACTION_VINARI, FACTION_TRADER]) {
+                processFactionAction(faction); // New function for individual faction actions
+            }
+        }
+
+        // Continue with other post-move logic
+        if (game.moveCount % GAME_LOOP_INTERVALS.economicUpdates === 0) {
+            regeneratePortStock();
+            updateEconomy();
+            displayConsoleMessage("Economy update cycle complete.", "success");
         }
 
         // Check for Hazard FIRST
@@ -598,13 +670,6 @@ function move(direction) {
         } else {
             // If not a hazard sector, display the standard arrival message (if any)
             displayArrivalMessage(); // <<<--- ADD THIS CALL HERE
-        }
-
-        // Continue with other post-move logic
-        if (game.moveCount % 5 === 0) {
-            regeneratePortStock();
-            processColonyProduction();
-            displayConsoleMessage("Economy update cycle complete.", "success");
         }
         moveNPCs();
         updateUI();
@@ -740,13 +805,18 @@ function runSimulationTick() {
     checkLotteryPeriodReset();
     applyVirusEffects();
 
-    if (game.moveCount % 5 === 0) {
-        regeneratePortStock();
-        updateEconomy(); // updateEconomy already logs its own message
+    if (game.moveCount % GAME_LOOP_INTERVALS.incomeAndBuilding === 0) {
+        processFactionIncomeAndBuilding();
     }
-
-    if (game.moveCount % 25 === 0) {
-        processFactionTurns(); // This will log faction news
+    if (game.moveCount % GAME_LOOP_INTERVALS.factionActionRoll === 0) {
+        for (const faction of [FACTION_DURAN, FACTION_VINARI, FACTION_TRADER]) {
+            processFactionAction(faction);
+        }
+    }
+    if (game.moveCount % GAME_LOOP_INTERVALS.economicUpdates === 0) {
+        regeneratePortStock();
+        updateEconomy();
+        displayConsoleMessage("Economy update cycle complete.", "success"); // updateEconomy itself logs event starts
     }
 
     // 3. Move the NPCs
@@ -1118,6 +1188,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 // Initialize the game when the DOM is fully loaded
-initGame();
 showLoginModal();
 });
