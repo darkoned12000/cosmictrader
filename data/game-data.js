@@ -586,3 +586,8 @@ const FACTION_ACTION_PROBABILITIES = {
 //const npcShipNames = ["Bucket", "Stardust", "Runner", "Comet", "Nomad", "Griffin", "Hammer", "Wanderer", "Zephyr", "Goliath"];
 //const npcShipClasses = ["Freighter", "Scout", "Gunship", "Raider", "Patrol", "Cruiser"];
 //const npcHostility = ["Low", "Med", "High", "Unknown"];
+
+// --- SIMULATION CONSTANTS ---
+// Consolidated from script.js for centralization
+const SIMULATION_MODE_ENABLED = true; // Set to true to enable, false to disable
+const SIMULATION_TICK_INTERVAL_MS = 250; // Time in milliseconds (e.g., 10000 = 10 seconds)

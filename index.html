@@ -108,7 +108,7 @@
     <script src="data/game-data.js"></script>
     <script src="data/naming-data.js"></script>
     <script src="data/lore-data.js"></script>
-    <script src="helpers/utility-helpers.js"></script>
+    <!-- Load all modules first -->
     <script src="modules/ui.js"></script>
     <script src="modules/audio.js"></script>
     <script src="modules/auth.js"></script>
@@ -121,6 +121,14 @@
     <script src="modules/economy.js"></script>
     <script src="modules/mechanics.js"></script>
     <script src="modules/rankings.js"></script>
+    <!-- Then load core utilities -->
+    <script src="core/utilities.js"></script>
+    <script src="core/state.js"></script>
+    <script src="core/movement.js"></script>
+    <script src="core/npc.js"></script>
+    <script src="core/actions.js"></script>
+    <script src="core/game.js"></script>
+    <script src="core/events.js"></script>
     <script src="script.js"></script>
 	
 </body>

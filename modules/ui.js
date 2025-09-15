@@ -910,6 +910,11 @@ function hideActionView() {
 
 // --- UI Update Master Function ---
 function updateUI() {
+    // Ensure UI is initialized
+    if (!ui.shipInfo) {
+        initializeUI();
+    }
+
     updateShipStatus();
     updateInventory();
     renderMap();

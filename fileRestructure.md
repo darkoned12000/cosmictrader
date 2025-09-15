@@ -57,115 +57,115 @@ Perform tasks in order. Each task includes:
 - **How**: Step-by-step instructions.
 - **Comments to Add**: Suggested inline comments for maintainability.
 
-### Phase 1: Consolidate Constants
-1. **Move Constants from `script.js` to `data/game-data.js`**:
-   - **What**: Extract all `const` declarations from `script.js` (e.g., `SIMULATION_MODE_ENABLED`, `LOTTERY_PLAYS_RESET_INTERVAL_MOVES`) and append them to `data/game-data.js`.
-   - **Why**: Centralizes all static data for easy access and updates.
-   - **How**:
-     - Open `script.js` and identify all `const` lines (e.g., lines 4-5, 78-79).
-     - Copy them to the end of `data/game-data.js`, grouping under new sections like `// --- SIMULATION AND LOTTERY CONSTANTS ---`.
-     - Remove the `const` lines from `script.js`.
-     - Update references in `script.js` to import from `data/game-data.js` (e.g., change `SIMULATION_MODE_ENABLED` to `gameData.SIMULATION_MODE_ENABLED` if using an object).
-   - **Comments to Add**: In `data/game-data.js`, add `// Consolidated from script.js for centralization` above moved constants.
+### Phase 1: Consolidate Constants [COMPLETED]
+1. **Move Constants from `script.js` to `data/game-data.js`** [COMPLETED]:
+    - **What**: Extract all `const` declarations from `script.js` (e.g., `SIMULATION_MODE_ENABLED`, `LOTTERY_PLAYS_RESET_INTERVAL_MOVES`) and append them to `data/game-data.js`.
+    - **Why**: Centralizes all static data for easy access and updates.
+    - **How**:
+      - Open `script.js` and identify all `const` lines (e.g., lines 4-5, 78-79).
+      - Copy them to the end of `data/game-data.js`, grouping under new sections like `// --- SIMULATION AND LOTTERY CONSTANTS ---`.
+      - Remove the `const` lines from `script.js`.
+      - Update references in `script.js` to import from `data/game-data.js` (e.g., change `SIMULATION_MODE_ENABLED` to `gameData.SIMULATION_MODE_ENABLED` if using an object).
+    - **Comments to Add**: In `data/game-data.js`, add `// Consolidated from script.js for centralization` above moved constants.
 
-2. **Update References in `script.js`**:
-   - **What**: Replace direct `const` usage with references to `data/game-data.js`.
-   - **Why**: Ensures no broken references after moves.
-   - **How**: Search for each moved constant in `script.js` and prefix with `gameData.` (assuming we export an object from `data/game-data.js`).
-   - **Comments to Add**: Add `// Imported from data/game-data.js` above the first usage of each constant.
+2. **Update References in `script.js`** [COMPLETED]:
+    - **What**: Replace direct `const` usage with references to `data/game-data.js`.
+    - **Why**: Ensures no broken references after moves.
+    - **How**: Search for each moved constant in `script.js` and prefix with `gameData.` (assuming we export an object from `data/game-data.js`).
+    - **Comments to Add**: Add `// Imported from data/game-data.js` above the first usage of each constant.
 
 ### Phase 2: Split `script.js` into Modules
-3. **Create `core/utilities.js`**:
-   - **What**: Extract shared helper functions (e.g., `getRandomInt`, `deepClone` if present).
-   - **Why**: Provides reusable utilities across modules.
-   - **How**:
-     - Create the file and move functions from `script.js` (search for utility functions).
-     - Export them (e.g., `export { getRandomInt }`).
-     - In `script.js`, replace with `import { getRandomInt } from './core/utilities.js'`.
-   - **Comments to Add**: `// Shared utility functions for randomization and cloning`.
+3. **Create `core/utilities.js`** [COMPLETED]:
+    - **What**: Extract shared helper functions (e.g., `getRandomInt`, `deepClone` if present).
+    - **Why**: Provides reusable utilities across modules.
+    - **How**:
+      - Create the file and move functions from `script.js` (search for utility functions).
+      - Export them (e.g., `export { getRandomInt }`).
+      - In `script.js`, replace with `import { getRandomInt } from './core/utilities.js'`.
+    - **Comments to Add**: `// Shared utility functions for randomization and cloning`.
 
-4. **Create `core/state.js`**:
-   - **What**: Move the `game` and `ui` objects from `script.js`.
-   - **Why**: Centralizes state management.
-   - **How**:
-     - Extract `const game = { ... }` and `const ui = { ... }` (lines ~8-97 in `script.js`).
-     - Export as `export const game = { ... }; export const ui = { ... };`.
-     - In `script.js`, import and use them.
-   - **Comments to Add**: `// Centralized game state and UI references`.
+4. **Create `core/state.js`** [COMPLETED]:
+    - **What**: Move the `game` and `ui` objects from `script.js`.
+    - **Why**: Centralizes state management.
+    - **How**:
+      - Extract `const game = { ... }` and `const ui = { ... }` (lines ~8-97 in `script.js`).
+      - Export as `export const game = { ... }; export const ui = { ... };`.
+      - In `script.js`, import and use them.
+    - **Comments to Add**: `// Centralized game state and UI references`.
 
-5. **Create `core/movement.js`**:
-   - **What**: Extract movement-related functions (e.g., `move`, `warpToSector`, `toggleSimulation`, `applyVirusEffects`, `toggleSolarArray`).
-   - **Why**: Groups all movement and simulation logic.
-   - **How**:
-     - Move functions from `script.js` (lines ~602-868).
-     - Export them and import in `script.js`.
-   - **Comments to Add**: `// Handles player movement, warping, simulation, and related effects`.
+5. **Create `core/movement.js`** [COMPLETED]:
+    - **What**: Extract movement-related functions (e.g., `move`, `warpToSector`, `toggleSimulation`, `applyVirusEffects`, `toggleSolarArray`).
+    - **Why**: Groups all movement and simulation logic.
+    - **How**:
+      - Move functions from `script.js` (lines ~602-868).
+      - Export them and import in `script.js`.
+    - **Comments to Add**: `// Handles player movement, warping, simulation, and related effects`.
 
-6. **Create `core/npc.js`**:
-   - **What**: Extract NPC-related functions (e.g., `moveNPCs`, `hailNPC`, `attackNPC`).
-   - **Why**: Directly addresses your request for NPC functionality in its own file.
-   - **How**:
-     - Move from `script.js` (search for NPC functions).
-     - Export and import.
-   - **Comments to Add**: `// All NPC creation, movement, and interaction logic`.
+6. **Create `core/npc.js`** [COMPLETED]:
+    - **What**: Extract NPC-related functions (e.g., `moveNPCs`, `hailNPC`, `attackNPC`).
+    - **Why**: Directly addresses your request for NPC functionality in its own file.
+    - **How**:
+      - Move from `script.js` (search for NPC functions).
+      - Export and import.
+    - **Comments to Add**: `// All NPC creation, movement, and interaction logic`.
 
-7. **Create `core/actions.js`**:
-   - **What**: Extract the `triggerAction` function and switch statement.
-   - **Why**: Isolates action handling.
-   - **How**:
-     - Move from `script.js` (lines ~914-117).
-     - Export and import.
-   - **Comments to Add**: `// Central handler for all player-triggered actions`.
+7. **Create `core/actions.js`** [COMPLETED]:
+    - **What**: Extract the `triggerAction` function and switch statement.
+    - **Why**: Isolates action handling.
+    - **How**:
+      - Move from `script.js` (lines ~914-117).
+      - Export and import.
+    - **Comments to Add**: `// Central handler for all player-triggered actions`.
 
-8. **Create `core/events.js`**:
-   - **What**: Extract event listeners (DOM and keyboard).
-   - **Why**: Separates UI event handling.
-   - **How**:
-     - Move from `script.js` (lines ~124-187).
-     - Export and import.
-   - **Comments to Add**: `// DOM and keyboard event listeners`.
+8. **Create `core/events.js`** [COMPLETED]:
+    - **What**: Extract event listeners (DOM and keyboard).
+    - **Why**: Separates UI event handling.
+    - **How**:
+      - Move from `script.js` (lines ~124-187).
+      - Export and import.
+    - **Comments to Add**: `// DOM and keyboard event listeners`.
 
-9. **Create `core/game.js`**:
-   - **What**: Move initialization, save/load, restart functions (e.g., `initGame`, `saveGame`, `loadGame`, `restartGame`).
-   - **Why**: Acts as the main entry point for game orchestration.
-   - **How**:
-     - Move from `script.js` (lines ~101-597).
-     - Export and import.
-   - **Comments to Add**: `// Main game initialization and lifecycle management`.
+9. **Create `core/game.js`** [COMPLETED]:
+    - **What**: Move initialization, save/load, restart functions (e.g., `initGame`, `saveGame`, `loadGame`, `restartGame`).
+    - **Why**: Acts as the main entry point for game orchestration.
+    - **How**:
+      - Move from `script.js` (lines ~101-597).
+      - Export and import.
+    - **Comments to Add**: `// Main game initialization and lifecycle management`.
 
-10. **Update Existing Modules**:
-    - **What**: Merge relevant functions from `script.js` into existing modules (e.g., move combat logic to `modules/combat.js`, faction logic to `modules/factions.js`).
-    - **Why**: Builds on existing structure.
-    - **How**: Identify and move (e.g., `startCombat` to `modules/combat.js`).
-    - **Comments to Add**: `// Merged from script.js for better organization`.
+10. **Update Existing Modules** [COMPLETED]:
+     - **What**: Merge relevant functions from `script.js` into existing modules (e.g., move combat logic to `modules/combat.js`, faction logic to `modules/factions.js`).
+     - **Why**: Builds on existing structure.
+     - **How**: Identify and move (e.g., `startCombat` to `modules/combat.js`).
+     - **Comments to Add**: `// Merged from script.js for better organization`.
 
-11. **Reduce `script.js`**:
-    - **What**: After moves, `script.js` should only contain orchestration (e.g., calling `initGame` from `core/game.js`).
-    - **Why**: Keeps it as a lightweight entry point.
-    - **How**: Remove moved code and add imports.
-    - **Comments to Add**: `// Main script: imports and orchestrates modules`.
+11. **Reduce `script.js`** [COMPLETED]:
+     - **What**: After moves, `script.js` should only contain orchestration (e.g., calling `initGame` from `core/game.js`).
+     - **Why**: Keeps it as a lightweight entry point.
+     - **How**: Remove moved code and add imports.
+     - **Comments to Add**: `// Main script: imports and orchestrates modules`.
 
-### Phase 3: Update HTML and Dependencies
-12. **Update `index.html`**:
+### Phase 3: Update HTML and Dependencies [COMPLETED]
+12. **Update `index.html`** [COMPLETED]:
     - **What**: Add `<script>` tags for new modules (e.g., `<script src="core/game.js"></script>`).
     - **Why**: Ensures new files are loaded in the correct order.
     - **How**: Insert after existing module includes, before `script.js`.
     - **Comments to Add**: `<!-- New core modules for refactored logic -->`.
 
-13. **Convert to ES6 Modules (Optional but Recommended)**:
+13. **Convert to ES6 Modules (Optional but Recommended)** [SKIPPED]:
     - **What**: Change `<script>` to `<script type="module">` and use `import/export`.
     - **Why**: Modernizes the codebase for better dependency management.
     - **How**: Update all files to use `export` and `import` statements.
     - **Comments to Add**: `// ES6 module for modern JS support`.
 
-### Phase 4: Testing and Validation
-14. **Test Functionality**:
+### Phase 4: Testing and Validation [COMPLETED]
+14. **Test Functionality** [COMPLETED]:
     - **What**: Run the game and verify all features (movement, combat, NPCs, etc.) work.
     - **Why**: Ensures no functionality was broken during moves.
     - **How**: Load the game, test key actions, and check console for errors.
     - **Comments to Add**: Add `console.log('Module loaded successfully')` in each new file for debugging.
 
-15. **Add Documentation Comments**:
+15. **Add Documentation Comments** [OPTIONAL]:
     - **What**: Add JSDoc-style comments to key functions (e.g., `/** @description Handles NPC movement */`).
     - **Why**: Improves readability and maintainability.
     - **How**: Add to functions in new modules.
