@@ -1,4 +1,12 @@
-function handleHazardEntry(sector) {
+// --- Mechanics Module Imports ---
+import { game } from '../core/state.js';
+import { displayConsoleMessage, updateUI } from './ui.js';
+import { playSoundEffect } from './audio.js';
+import { logGalaxyEvent } from './factions.js';
+import { initGame } from '../core/game.js';
+import { getRandomInt } from '../core/utilities.js';
+
+export function handleHazardEntry(sector) {
     if (!sector || sector.type !== 'hazard' || !sector.data) return;
 
     const hazardType = sector.data.hazardType;
@@ -90,7 +98,7 @@ function handleHazardEntry(sector) {
  * @param {object} hazardData - The hazard data object.
  * @returns {boolean} True if NPC was destroyed, false otherwise.
  */
-function handleNpcHazardImpact(npc, hazardData) {
+export function handleNpcHazardImpact(npc, hazardData) {
     const hazardType = hazardData.hazardType;
     let damage = 0;
     let message = "";
@@ -148,7 +156,7 @@ function handleNpcHazardImpact(npc, hazardData) {
 }
 
 
-function deployMine() {
+export function deployMine() {
     if (game.player.ship.mines > 0) {
         const key = `${game.player.x},${game.player.y}`;
         // Prevent deploying mine in a sector already occupied by a significant object

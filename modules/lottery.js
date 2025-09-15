@@ -1,4 +1,11 @@
 
+// --- Lottery Module Imports ---
+import { game } from '../core/state.js';
+import { displayConsoleMessage, updateUI } from './ui.js';
+import { playSoundEffect } from './audio.js';
+import { getRandomInt } from '../core/utilities.js';
+import { LOTTERY_PLAYS_RESET_INTERVAL_MOVES } from '../data/game-data.js';
+
 // This function resets the lottery state for a new game
 // ES6 Module export
 export function resetLotteryState() {
@@ -17,7 +24,7 @@ export function resetLotteryState() {
 
 
 // This function checks if the lottery play counter should be reset
-function checkLotteryPeriodReset() {
+export function checkLotteryPeriodReset() {
     if (game.moveCount >= game.lottery.lastPlayPeriodResetMoveCount + LOTTERY_PLAYS_RESET_INTERVAL_MOVES) {
         if (game.lottery.playsThisPeriod >= game.lottery.maxPlaysPerPeriod) {
             displayConsoleMessage("Lottery plays for the current period have been reset!", "minor");
@@ -29,14 +36,14 @@ function checkLotteryPeriodReset() {
 
 
 // This puts the cursor in the first box during the lottery play
-function focusLotteryInput() {
+export function focusLotteryInput() {
     const firstInput = document.getElementById('lotto-digit-0');
     if (firstInput) {
         firstInput.focus();
     }
 }
 
-function generateLotteryUI() {
+export function generateLotteryUI() {
     let html = `<div style="padding:10px; text-align:center;">`;
     const ticketCost = game.lottery.ticketCost;
 
@@ -112,7 +119,7 @@ function generateLotteryUI() {
 }
 
 
-function handleLotteryNumberSubmission() {
+export function handleLotteryNumberSubmission() {
     const inputs = [];
     const userNumbersSet = new Set();
     let isValid = true;
@@ -286,3 +293,6 @@ function handleLotteryDigitInput(currentInput, currentIndex) {
         }
     }
 }
+
+// Make handleLotteryDigitInput globally available for HTML oninput handlers
+window.handleLotteryDigitInput = handleLotteryDigitInput;

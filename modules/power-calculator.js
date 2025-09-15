@@ -3,7 +3,7 @@
  * @param {object} entity - The player object or an NPC Ship object.
  * @returns {number} The calculated Total Power score.
  */
-function calculateEntityPower(entity) {
+export function calculateEntityPower(entity) {
     let power = 0;
     const isPlayer = entity.name === "Player";
     const ship = isPlayer ? entity.ship : entity;

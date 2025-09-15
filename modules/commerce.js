@@ -1,5 +1,13 @@
 
-function trade(action, commodity, quantityToTransact = 1) { // quantityToTransact added, defaults to 1
+// --- Commerce Module Imports ---
+import { game } from '../core/state.js';
+import { displayConsoleMessage, updateUI } from './ui.js';
+import { playSoundEffect } from './audio.js';
+import { getRandomElement, getRandomInt } from '../core/utilities.js';
+import { FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
+import { equipmentCosts, scannerModels, exoticPrices, shipClasses, commodities } from '../data/game-data.js';
+
+export function trade(action, commodity, quantityToTransact = 1) { // quantityToTransact added, defaults to 1
     const sector = game.map[`${game.player.x},${game.player.y}`];
     // Ensure trading only at designated 'port' types, not 'spacePort' for commodities
     if (!sector || sector.type !== 'port') {
@@ -164,7 +172,7 @@ function trade(action, commodity, quantityToTransact = 1) { // quantityToTransac
 }
 
 
-function handleTradeAll(action, commodity) {
+export function handleTradeAll(action, commodity) {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || sector.type !== 'port') {
         displayConsoleMessage("Trade All/Max actions only at Ports.", "error");
@@ -221,7 +229,7 @@ function handleTradeAll(action, commodity) {
 }
 
 
-function buyFuel() {
+export function buyFuel() {
     const input = document.getElementById('buy-fuel-amount')?.value;
     const amountToBuy = parseInt(input, 10);
 
@@ -256,7 +264,7 @@ function buyFuel() {
     updateUI();
 }
 
-function buyEquipment(type) {
+export function buyEquipment(type) {
     const itemInfo = equipmentCosts[type];
     if (!itemInfo) {
         displayConsoleMessage(`Unknown equipment type: ${type}`, 'error');
@@ -292,7 +300,7 @@ function buyEquipment(type) {
 }
 
 
-function handleSellExotic(resourceName) {
+export function handleSellExotic(resourceName) {
     if (!game.player.inventory.hasOwnProperty(resourceName)) {
         displayConsoleMessage(`Error: Unknown resource '${resourceName}'.`, 'error');
         return;
@@ -314,7 +322,7 @@ function handleSellExotic(resourceName) {
 }
 
 
-function handleSellAllExotic(resourceName) {
+export function handleSellAllExotic(resourceName) {
     const amountToSell = game.player.inventory[resourceName];
     if (amountToSell > 0) {
         const pricePerUnit = exoticPrices[resourceName];
@@ -334,7 +342,7 @@ function handleSellAllExotic(resourceName) {
 }
 
 
-function upgradeScanner(model) {
+export function upgradeScanner(model) {
     const scannerInfo = scannerModels[model];
     if (!scannerInfo) {
         displayConsoleMessage(`Unknown scanner model: ${model}`, 'error');
@@ -363,7 +371,7 @@ function upgradeScanner(model) {
     updateUI();
 }
 
-function buyWarpDrive() {
+export function buyWarpDrive() {
     const cost = 5000;
     if (game.player.ship.warpDrive === 'Installed') {
         displayConsoleMessage("Warp Drive is already installed.", 'error');
@@ -388,7 +396,7 @@ function buyWarpDrive() {
     }
 }
 
-function calculateTradeIn(newClass) {
+export function calculateTradeIn(newClass) {
     const newShip = shipClasses[newClass];
     const oldShip = shipClasses[game.player.class];
 
@@ -443,7 +451,7 @@ function calculateTradeIn(newClass) {
     return { totalTradeIn: totalTradeIn, netCost: netCost };
 }
 
-function buyShip(newClass) {
+export function buyShip(newClass) {
     const newShipStats = shipClasses[newClass];
     if (!newShipStats) {
         displayConsoleMessage(`Unknown ship class: ${newClass}`, 'error');
@@ -493,7 +501,7 @@ function buyShip(newClass) {
 }
 
 
-function upgradePort() {
+export function upgradePort() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || sector.type !== 'port' || sector.data.owner !== game.player.name) { // Only upgrade ports you own
         displayConsoleMessage("You can only upgrade Ports that you own.", 'error');
@@ -575,7 +583,7 @@ function upgradePort() {
 }
 
 // --- NEW PORT ACTIVITY FUNCTIONS ---
-function attemptStealResources() {
+export function attemptStealResources() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || sector.type !== 'port' || (sector.data.owner === game.player.name && sector.data.owner !== undefined /* Allow stealing from unowned/NPC ports */)) {
         displayConsoleMessage("Cannot steal resources here or from your own port.", 'error');
@@ -698,7 +706,7 @@ function attemptStealResources() {
 }
 
 // Function to handle hacking attempts
-function attemptHackPort() {
+export function attemptHackPort() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || (sector.type !== 'port' && sector.type !== 'spacePort')) {
         displayConsoleMessage("Hacking is only possible at Ports or Space Ports.", 'error');
@@ -781,7 +789,7 @@ function attemptHackPort() {
 }
 
 // Function to upgrade Port Security (Only available at ports you own)
-function upgradePortSecurity() {
+export function upgradePortSecurity() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || sector.type !== 'port' || sector.data.owner !== game.player.name) { // Only upgrade ports you own
         displayConsoleMessage("You can only upgrade security at Ports that you own.", 'error');
@@ -826,7 +834,7 @@ function upgradePortSecurity() {
 }
 
 
-function attemptPurchasePort() {
+export function attemptPurchasePort() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || sector.type !== 'port') {
         displayConsoleMessage("Purchase inquiries only at Trading Ports.", 'error');
@@ -902,7 +910,7 @@ function attemptPurchasePort() {
     // updateUI(); // updateUI is called within success/failure paths or if no action taken
 }
 
-function payForTip() {
+export function payForTip() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
      // Allow paying for a tip at any port or spaceport? Let's allow both.
     if (!sector || (sector.type !== 'port' && sector.type !== 'spacePort')) {
@@ -945,7 +953,7 @@ function payForTip() {
 
 
 // Function to upgrade Player Software (Computer Level) - Available at Space Ports
-function upgradeSoftware() {
+export function upgradeSoftware() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || sector.type !== 'spacePort') {
         displayConsoleMessage("Software upgrades are only available at Space Ports.", 'error');
@@ -982,7 +990,7 @@ function upgradeSoftware() {
 }
 
 // Function to remove Viruses - Available at Space Ports
-function removeViruses() {
+export function removeViruses() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || sector.type !== 'spacePort') {
         displayConsoleMessage("Virus removal services are only available at Space Ports.", 'error');
@@ -1015,7 +1023,7 @@ function removeViruses() {
     }
 }
 
-function handleEditShipName() {
+export function handleEditShipName() {
     const currentName = game.player.ship.name;
     const newName = prompt("Enter a new name for your ship:", currentName);
 

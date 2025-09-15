@@ -1,5 +1,10 @@
 // --- Ship Class Definition ---
 // ES6 Module export
+
+// Import name data, faction constants, ship classes, and utilities
+import { FIRST_NAMES, LAST_NAMES, FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
+import { shipClasses } from '../data/game-data.js';
+import { getRandomElement, getRandomInt } from '../core/utilities.js';
 export class Ship {
     constructor(
         ship_id,
@@ -85,22 +90,20 @@ export class Ship {
 }
 
 // --- Constants for Factions and Classes ---
-export const FACTION_TRADER = "Trader";
-export const FACTION_DURAN = "Duran";
-export const FACTION_VINARI = "Vinari";
-// Add other factions as needed
+// Faction constants are now imported from naming-data.js to avoid circular dependency
 
-const SHIP_CLASS_INTERCEPTOR = "Interceptor";
-const SHIP_CLASS_FREIGHTER = "Freighter";
-const SHIP_CLASS_FRIGATE = "Frigate";
-const SHIP_CLASS_CRUISER = "Cruiser";
-const SHIP_CLASS_EXPLORATION = "Exploration";
-const SHIP_CLASS_BATTLESHIP = "Battleship";
-const SHIP_CLASS_CAPITAL = "Capital Ship";
+export const SHIP_CLASS_INTERCEPTOR = "Interceptor";
+export const SHIP_CLASS_FREIGHTER = "Freighter";
+export const SHIP_CLASS_FRIGATE = "Frigate";
+export const SHIP_CLASS_CRUISER = "Cruiser";
+export const SHIP_CLASS_EXPLORATION = "Exploration";
+export const SHIP_CLASS_BATTLESHIP = "Battleship";
+export const SHIP_CLASS_CAPITAL = "Capital Ship";
 
 // --- NPC Generation Parameters ---
 // Structure: [max_shields_range, max_hull_range, fighters_range, missiles_range, image_prefix_list]
-const NPC_ARCHETYPES = {
+// Exported for use in other modules
+export const NPC_ARCHETYPES = {
     [FACTION_TRADER]: {
         [SHIP_CLASS_INTERCEPTOR]: ["Starhawk Skiff", [0.9, 1.1], [0.9, 1.1], [0, 1], [0, 2], ["trader_scout_A"]],
         [SHIP_CLASS_FREIGHTER]: ["Bargemaster Dray", [0.9, 1.1], [0.9, 1.1], [0, 0], [0, 0], ["trader_freighter_A"]],
@@ -154,6 +157,11 @@ function getNextShipId() {
     const newId = nextShipIdCounter;
     nextShipIdCounter++;
     return newId;
+}
+
+// Function to reset the ship ID counter (for game restart)
+export function resetShipIdCounter() {
+    nextShipIdCounter = 1;
 }
 
 // --- Main NPC Name Generation Function ---

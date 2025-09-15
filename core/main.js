@@ -32,5 +32,16 @@ import './actions.js';
 import './game.js';
 import './events.js';
 
+// Enable Performance Monitoring in development mode
+//import { perfMonitor } from '../modules/performance-monitor.js';
+
 // The events.js module will automatically initialize when imported
 console.log('🚀 Cosmic Trader ES6 modules loaded successfully!');
+
+// To see perfMonitor type 'perfMonitor.toggle()' in the console
+//  and then refresh the page to see performance metrics in the console
+//  You can also call 'perfMonitor.report()' to get a summary report
+//  or 'perfMonitor.reset()' to clear the collected data
+//  Note: This is intended for development use only and may impact performance
+//        Do not enable in production or for regular gameplay
+//perfMonitor.init(); // Initialize performance monitoring

@@ -1,4 +1,9 @@
-const FIRST_NAMES = [
+// Faction constants (moved here to avoid circular dependency)
+export const FACTION_TRADER = "Trader";
+export const FACTION_DURAN = "Duran";
+export const FACTION_VINARI = "Vinari";
+
+export const FIRST_NAMES = [
     "Korgath", "T'Pral", "Quarkis", "Garoth", "Lwaxana", "Zevok", "Wicketta", "Vornak", "Salat", "Tuvix",
     "Brakiss", "J’onnar", "Qweev", "Lirath", "M’pok", "Sybok", "Dukat", "N’vek", "Romara", "Chirpa",
     "T’Lara", "Vorin", "Grelok", "Feris", "Betara", "Kweej", "Torg", "Vulan", "Zorin", "Yaddlek",
@@ -8,7 +13,7 @@ const FIRST_NAMES = [
     "Lyra", "Nova", "Aria", "Seraphina", "Astrid", "Thalia", "Zara", "Iris", "Juniper"
 ];
 
-const LAST_NAMES = [
+export const LAST_NAMES = [
     "K’tar", "V’lar", "Zolak", "Duras", "Troi’el", "Yubnub", "Skrain", "T’Pol", "Quarkon", "Moghra",
     "V’tek", "Wompat", "Garakith", "T’varis", "Bruntok", "Korgon", "L’Raan", "Zev’rok", "Tarkis", "S’vok",
     "Deanna’ra", "Wicketar", "Vorath", "Gul’ek", "T’Lani", "Romulak", "B’Tor", "Zibber", "Kweevok", "Martok",
@@ -19,7 +24,7 @@ const LAST_NAMES = [
 ];
 
 // New data structure for faction-specific final words.
-const FACTION_DEATH_CRIES = {
+export const FACTION_DEATH_CRIES = {
     [FACTION_DURAN]: [
         "For the Hegemony! Avenge my steel!",
         "My scales shatter, but our will endures!",

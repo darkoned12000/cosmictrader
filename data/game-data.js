@@ -1,6 +1,8 @@
 // --- DATA STRUCTURES ---
+// Import faction constants from naming-data.js
+import { FACTION_DURAN, FACTION_VINARI, FACTION_TRADER } from './naming-data.js';
 
-const shipClasses = {
+export const shipClasses = {
     // -- Trades (Independent Traders Guild) SHIPS --
     'Starhawk Skiff': { // Interceptor/Fighter
         price: 5000,
@@ -383,14 +385,14 @@ const shipClasses = {
 
 
 // -- Scanner Types --
-const scannerModels = {
+export const scannerModels = {
     Basic: { range: 7, cost: 0 },
     Standard: { range: 10, cost: 12000 },
     Advanced: { range: 15, cost: 25000 }
 };
 
 // -- Ship Equipment Costs at SpacePorts --
-const equipmentCosts = {
+export const equipmentCosts = {
     shields: { cost: 500, amount: 100, max: 'maxShields' },
     mines: { cost: 100, amount: 1, max: 'maxMines' },
     fighters: { cost: 200, amount: 1, max: 'maxFighters' },
@@ -404,7 +406,7 @@ const equipmentCosts = {
 
 // -- Commodities and stuff to sell at SpacePorts --
 export const commodities = ['ore', 'food', 'tech'];
-const exoticPrices = { minerals: 250, organics: 500, artifacts: 5000 };
+export const exoticPrices = { minerals: 250, organics: 500, artifacts: 5000 };
 
 // -- Planets, Stars and Hazards --
 // All star, planet, hazard names and info is randomly generated from the terms below
@@ -415,7 +417,7 @@ export const planetOwnership = ["Unclaimed", "Federation", FACTION_DURAN, FACTIO
 export const starNames = ["Zorathis", "Aelion", "Sypheris", "Vorynth", "Celara", "Rynex", "Thalarae", "Orwynis", "Glavion", "Zephyra", "Tyronis", "Axionis", "Nebulys", "Valthara", "Sarion", "Elyxar", "Corvys", "Zantaris", "Oberys", "Krythar", "Selaris", "Phaetara", "Eclipson", "Astralon", "Vionara", "Nexilys", "Caelion", "Sypheron", "Galethar", "Xeridion", "Lumarys", "Tychara", "Velion", "Myrion", "Arcturis", "Novara", "Zephyrion", "Calyxar", "Orithys", "Sylvaris", "Aetherys", "Draconara", "Quasara", "Solarion", "Erebion", "Thalysar", "Kryonis", "Vylion", "Nexarion", "Zorathar"];
 export const starTypes = ["O-Type", "B-Type", "A-Type", "F-Type", "G-Type", "K-Type", "M-Type", "White Dwarf", "Red Giant", "Brown Dwarf"];
 export const hazardTypes = ["Black Hole", "Asteroid Field", "Mine", "Solar Storm", "Nebula", "Interstellar Dust Cloud", "Plasma Field", "Ion Cloud", "Micrometeorite Shower", "Magnetic Storm", "Dark Matter Cloud"];
-const planetImagesByType = { // These are stored in: ./Images/planets/
+export const planetImagesByType = { // These are stored in: ./Images/planets/
     "Terran": ["Images/planets/Terran_World_1.gif", "Images/planets/Terran_World_2.gif"],
     "Jungle": ["Images/planets/Jungle_World_1.gif"],
     "Desert": ["Images/planets/Desert_World_1.gif"],
@@ -427,7 +429,7 @@ const planetImagesByType = { // These are stored in: ./Images/planets/
     "Toxic": ["Images/planets/Toxic_World_1.gif"],
     "Unknown": ["Images/planets/Unknown_World_1.gif"]
 };
-const starImagesByType = { // These are stored in: ./Images/stars/
+export const starImagesByType = { // These are stored in: ./Images/stars/
     "G-Type": ["Images/stars/Star_Yellow_1.gif"],
     "K-Type": ["Images/stars/Star_Orange_1.gif"],
     "M-Type": ["Images/stars/Star_Red_1.gif"],
@@ -436,7 +438,7 @@ const starImagesByType = { // These are stored in: ./Images/stars/
     "WD": ["Images/stars/Star_White_1.gif"],
     "Unknown": ["Images/stars/Star_Unknown_1.gif"]
 };
-const hazardImagesByType = { // These are stored in: ./Images/hazards/
+export const hazardImagesByType = { // These are stored in: ./Images/hazards/
     "Mine": ["Images/hazards/Mines.png"],
     "Black Hole": ["Images/hazards/Black_Hole_1.gif", "Images/hazards/Black_Hole_2.gif", "Images/hazards/Black_Hole_3.gif"],
     "Asteroid Field": ["Images/hazards/Asteroid_1.gif", "Images/hazards/Asteroid_2.gif", "Images/hazards/Asteroid_3.gif"],
@@ -475,13 +477,13 @@ export const spacePortImages = [
     'Images/stations/Station_2.png',
     'Images/stations/Station_3.png'
 ];
-const LOTTERY_PLAYS_RESET_INTERVAL_MOVES = 1000; // Player gets 3 new plays every 50 moves
-const PORT_FOR_SALE_BASE_CHANCE = 0.22; // 22% base chance
+export const LOTTERY_PLAYS_RESET_INTERVAL_MOVES = 1000; // Player gets 3 new plays every 50 moves
+export const PORT_FOR_SALE_BASE_CHANCE = 0.22; // 22% base chance
 
 // -- VIRUS TYPES --
 // Define virus types and their effects
 // Effects are functions that take the player object and modify it
-const virusTypes = [
+export const virusTypes = [
     {
         name: "Credit Drain",
         effect: (player) => { const loss = Math.ceil(player.credits * 0.005); player.credits = Math.max(0, player.credits - loss); return `-${loss} credits`; },
@@ -523,33 +525,16 @@ const virusTypes = [
 // --- AUDIO DATA ---
 // Music files are located here: ./Music
 // To add your own music, put the entries here
-const musicThemes = [
+export const musicThemes = [
     { name: "Darkness Below", file: "Music/The-Darkness-Below.mp3" },
     { name: "Star Light", file: "Music/Star-Light.mp3" },
     { name: "Solar Storm", file: "Music/Solar-Storm.mp3" },
     { name: "Cold Moon", file: "Music/Cold-Moon.mp3" }
 ];
-// Sound Effects have not been implemented yet, these are all PLACEHOLDERS
-const soundEffects = {
-    'warp_engage': 'Effects/snd_warp_start.wav',
-    'mine_hit': 'Effects/snd_explosion_1.ogg',
-    'trade_buy': 'Effects/snd_cha_ching.mp3',
-    'trade_sell': 'Effects/snd_coin_drop.wav',
-    'ui_click': 'Effects/snd_ui_click.wav',
-    'ship_bought': 'Effects/snd_ship_purchase.mp3',
-    'upgrade': 'Effects/snd_upgrade.wav',
-    'error': 'Effects/snd_error.ogg',
-    'low_fuel': 'Effects/snd_alarm_fuel.ogg',
-    'ship_destroyed': 'Effects/snd_explosion_large.mp3',
-    'hack_success': 'Effects/snd_access_granted.wav',
-    'hack_fail': 'Effects/snd_access_denied.wav',
-    'virus_infect': 'Effects/snd_alarm_red.ogg',
-    'virus_clean': 'Effects/snd_heal.wav',
-    'message_system': 'Effects/snd_ui_tap.wav'
-};
+
 
 // --- Game Loop Intervals (How often checks occur) ---
-const GAME_LOOP_INTERVALS = {
+export const GAME_LOOP_INTERVALS = {
     incomeAndBuilding: 10, // Faction income and ship building every 10 turns
     factionActionRoll: 5,  // Each faction rolls for an action every 5 turns
     economicUpdates: 5     // Economic updates happen every 5 turns (already existing)
@@ -558,7 +543,7 @@ const GAME_LOOP_INTERVALS = {
 // --- Faction Action Probabilities (Per Faction, Per Action Roll) ---
 // These are the CHANCES a specific action will be attempted when it's that faction's turn to roll for an action.
 // The sum of probabilities for each faction should not exceed 1.0 (or just let higher values mean higher chance)
-const FACTION_ACTION_PROBABILITIES = {
+export const FACTION_ACTION_PROBABILITIES = {
     [FACTION_DURAN]: {
         invasion: 0.03,             // Base 3% chance per roll
         economicSabotage: 0.02,     // Base 2% chance
@@ -589,5 +574,5 @@ const FACTION_ACTION_PROBABILITIES = {
 
 // --- SIMULATION CONSTANTS ---
 // Consolidated from script.js for centralization
-const SIMULATION_MODE_ENABLED = true; // Set to true to enable, false to disable
-const SIMULATION_TICK_INTERVAL_MS = 250; // Time in milliseconds (e.g., 10000 = 10 seconds)
+export const SIMULATION_MODE_ENABLED = true; // Set to true to enable, false to disable
+export const SIMULATION_TICK_INTERVAL_MS = 250; // Time in milliseconds (e.g., 10000 = 10 seconds)

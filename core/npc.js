@@ -1,5 +1,13 @@
 // All NPC creation, movement, and interaction logic
 
+// --- NPC Module Imports ---
+import { game } from './state.js';
+import { displayConsoleMessage, updateUI } from '../modules/ui.js';
+import { playSoundEffect } from '../modules/audio.js';
+import { handleNpcHazardImpact } from '../modules/mechanics.js';
+import { FACTION_TRADER, FACTION_VINARI, FACTION_DURAN } from '../data/naming-data.js';
+import { getRandomInt, getRandomElement } from './utilities.js';
+
 /**
  * Determines the map display type string for an NPC based on its faction.
  * @param {string} faction - The faction of the NPC (e.g., FACTION_TRADER, FACTION_VINARI).
@@ -34,7 +42,7 @@ function tradeWithNPC(npc) {
 /**
  * Handles the random movement of all active NPCs on the map.
  */
-function moveNPCs() {
+export function moveNPCs() {
     // Create a copy of the npcs array to iterate, as it might be modified during the loop (if NPCs are destroyed)
     const npcsToProcess = [...game.npcs];
 
@@ -102,7 +110,7 @@ function moveNPCs() {
 }
 
 
-function hailNPC() {
+export function hailNPC() {
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || !['npc_trader', 'vinari_ship', 'duran_ship'].includes(sector.type)) {
         displayConsoleMessage("No hailable ships in this sector.", 'error'); return;

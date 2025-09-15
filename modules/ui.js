@@ -2,18 +2,26 @@
 // --- CONSOLE MESSAGES ---
 // ES6 Module exports
 
+import { game, ui } from '../core/state.js';
+import { playSoundEffect, attemptFirstAudioPlay } from './audio.js';
+import { equipmentCosts, exoticPrices, scannerModels, shipClasses, planetImagesByType, hazardImagesByType, starImagesByType, commodities } from '../data/game-data.js';
+import { FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
+import { NPC_ARCHETYPES } from '../ship-definitions.js';
+import { calculateTradeIn } from './commerce.js';
+import { generateLotteryUI } from './lottery.js';
+import { generatePlanetDescription } from './planets.js';
+import { getRandomImage } from '../core/utilities.js';
+
 export function displayConsoleMessage(message, type = 'neutral', sound = 'message_system') {
-    if (arguments.length === 2 && soundEffects[type] && !soundEffects[sound]) {
-        sound = type; type = 'neutral';
-    }
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     game.consoleMessages.unshift({ text: message, type: type, timestamp: timestamp });
     if (game.consoleMessages.length > game.maxConsoleMessages) game.consoleMessages.pop();
     updateConsoleDisplay();
-    playSoundEffect(sound);
+    // Sound effects temporarily disabled to prevent 404 errors
+    // playSoundEffect(sound);
 }
 
-function updateConsoleDisplay() {
+export function updateConsoleDisplay() {
     ui.consoleMessagesDiv.innerHTML = '';
     game.consoleMessages.forEach(msgObj => {
         const messageElement = document.createElement('div');
@@ -31,7 +39,7 @@ function updateConsoleDisplay() {
  * @param {number} max - The maximum value of the resource.
  * @returns {string} A CSS color string.
  */
-function getStatusColor(current, max) {
+export function getStatusColor(current, max) {
     if (max === 0) return '#aaa'; // Default color for things with no max capacity
     const percentage = (current / max) * 100;
     if (percentage > 75) return 'lime';      // > 75% is green
@@ -42,7 +50,7 @@ function getStatusColor(current, max) {
 
 
 // --- UI UPDATE FUNCTIONS ---
-function updateShipStatus() {
+export function updateShipStatus() {
     const s = game.player.ship;
     const p = game.player;
     const c = Object.values(p.inventory).reduce((a, b) => a + b, 0);
@@ -75,7 +83,7 @@ function updateShipStatus() {
 }
 
 
-function updateInventory() {
+export function updateInventory() {
     const currentCargo = Object.values(game.player.inventory).reduce((a, b) => a + b, 0);
     const freeSpace = game.player.ship.cargoSpace - currentCargo;
 
@@ -99,7 +107,7 @@ function updateInventory() {
 }
 
 
-function updateInformationFeed() {
+export function updateInformationFeed() {
     const sectorInfo = game.map[`${game.player.x},${game.player.y}`]; // Use 'sectorInfo' to avoid conflict
     let htmlOutput = ''; // Use 'htmlOutput'
     const sectorIdentifier = "[Neutral]"; // Placeholder
@@ -231,7 +239,7 @@ function updateInformationFeed() {
     ui.infoFeedContent.innerHTML = htmlOutput.trim();
 }
 
-function renderMap() {
+export function renderMap() {
     const mapCache = new Map(); // Cache rendered sectors
     let m = '';
     const hW = Math.floor(game.viewWidth / 2); const hH = Math.floor(game.viewHeight / 2);
@@ -280,7 +288,7 @@ function renderMap() {
 // In CosmicTrader/script.js
 // Replace your entire existing updateInteraction function with this:
 
-function updateInteraction() {
+export function updateInteraction() {
     const currentCoords = `${game.player.x},${game.player.y}`;
     const sector = game.map[currentCoords];
     let displayHTML = '';         // For the main interaction display (center image/text)
@@ -587,7 +595,7 @@ function updateInteraction() {
 // Buttons within these sections still use inline onclick for simplicity given their dynamic nature.
 // For a larger project, consider more advanced techniques (templating, attaching listeners after render).
 
-function generateSpaceportServicesHTML() {
+export function generateSpaceportServicesHTML() {
     let h = '';
     h += `<div><p>Refuel:</p><button onclick="triggerAction('buyFuel')" ${game.player.credits<equipmentCosts.fuel.unitCost||game.player.ship.fuel>=game.player.ship.maxFuel?'disabled':''}>Fuel(${equipmentCosts.fuel.unitCost}/u)</button><label>Amt:</label><input type="number" id="buy-fuel-amount" min="1" value="100" style="width:60px;"></div>`;
     h += `<div><p>Equip:</p><div class="button-group">`;
@@ -650,7 +658,7 @@ function generateSpaceportServicesHTML() {
 }
 
 // Generates HTML for the Player Software Upgrade section (Space Port only)
-function generateSoftwareUpgradeHTML() {
+export function generateSoftwareUpgradeHTML() {
     const currentLevel = game.player.ship.computerLevel || 1;
     const maxLevel = 10;
     if (currentLevel >= maxLevel) return `<div><p>Software Upgrades:</p><button disabled>Computer LVL ${currentLevel} (Max)</button></div>`;
@@ -663,7 +671,7 @@ function generateSoftwareUpgradeHTML() {
 }
 
 // Generates HTML for the Virus Removal section (Space Port only)
-function generateVirusRemovalHTML() {
+export function generateVirusRemovalHTML() {
     if (game.player.viruses.length === 0) return ''; // Hide if no viruses
     const costPerVirus = 750; // Example cost
     const totalCost = game.player.viruses.length * costPerVirus;
@@ -672,7 +680,7 @@ function generateVirusRemovalHTML() {
 }
 
 
-function generateWarpControlsHTML() {
+export function generateWarpControlsHTML() {
     if (game.player.ship.warpDrive === 'Installed') {
         return `<div><p>Warp(2f/s):</p><div><label>X:</label><input type="number" id="warp-x" min="0" max="${game.mapWidth - 1}" value="${game.player.x}" style="width:60px;"><label>Y:</label><input type="number" id="warp-y" min="0" max="${game.mapHeight - 1}" value="${game.player.y}" style="width:60px;"><button onclick="triggerAction('warpToSector')">Warp</button></div></div>`;
     }
@@ -686,7 +694,7 @@ function generateWarpControlsHTML() {
 
 
 // --- SPACE MANUAL ---
-function displayManual() {
+export function displayManual() {
     attemptFirstAudioPlay(); // Attempt audio play on interaction
     playSoundEffect('ui_click'); // Sound for opening manual
 
@@ -786,7 +794,7 @@ function displayManual() {
     // so when the player moves, the manual view will be replaced by the location view.
 }
 
-function hideManual() {
+export function hideManual() {
      // This function is called when the "Close Manual" button is clicked
      // It simply calls updateUI, which will re-render the interaction box
      // based on the current location (which will hide the manual unless at a location)
@@ -794,7 +802,7 @@ function hideManual() {
      updateUI();
 }
 
-function displayGalaxyLog() {
+export function displayGalaxyLog() {
     attemptFirstAudioPlay();
     playSoundEffect('ui_click');
 
@@ -820,7 +828,7 @@ function displayGalaxyLog() {
     document.getElementById('close-manual-button').addEventListener('click', hideManual);
 }
 
-function filterGalaxyLog() {
+export function filterGalaxyLog() {
     const searchTerm = document.getElementById('galaxy-log-search').value.toLowerCase();
     const logContainer = document.getElementById('galaxy-log-container');
     const filteredLog = game.galaxyLog.filter(entry => entry.text.toLowerCase().includes(searchTerm));
@@ -838,7 +846,7 @@ function filterGalaxyLog() {
 /**
  * Displays a console message specific to the type of object in the player's current sector upon arrival.
  */
-function displayArrivalMessage() { /* ... (no changes needed here, uses sector.type which is now set correctly) ... */
+export function displayArrivalMessage() { /* ... (no changes needed here, uses sector.type which is now set correctly) ... */
     const sector = game.map[`${game.player.x},${game.player.y}`];
     if (!sector || !sector.data || sector.type === 'hazard') return; // Hazards handled by handleHazardEntry
     let message = ''; let type = 'info'; let sound = 'message_system'; // Default sound for arrivals
@@ -860,7 +868,7 @@ function displayArrivalMessage() { /* ... (no changes needed here, uses sector.t
 }
 
 
-function displayDefenseManagement() {
+export function displayDefenseManagement() {
     const planet = game.map[`${game.player.x},${game.player.y}`].data;
     // Safety check in case this is called on a non-player planet
     if (!planet || planet.ownership !== game.player.name) {
@@ -902,7 +910,7 @@ function displayDefenseManagement() {
 /**
  * Hides any full-panel view (like Manual, Log, Rankings) by refreshing the UI.
  */
-function hideActionView() {
+export function hideActionView() {
     playSoundEffect('ui_click');
     // Refreshes the UI based on the player's current location,
     // which effectively closes the Manual, Log, or Rankings panel.

@@ -1,4 +1,14 @@
 // A function to set up the initial state of all factions
+// --- Factions Module Imports ---
+import { game } from '../core/state.js';
+import { displayConsoleMessage } from './ui.js';
+import { getRandomInt, getRandomElement } from '../core/utilities.js';
+import { FACTION_DURAN, FACTION_VINARI, FACTION_TRADER, FACTION_DEATH_CRIES } from '../data/naming-data.js';
+import { GAME_LOOP_INTERVALS, FACTION_ACTION_PROBABILITIES, shipClasses, virusTypes, commodities } from '../data/game-data.js';
+import { SHIP_CLASS_INTERCEPTOR, SHIP_CLASS_FRIGATE, SHIP_CLASS_CRUISER, SHIP_CLASS_BATTLESHIP, SHIP_CLASS_CAPITAL, NPC_ARCHETYPES, createNpcShip } from '../ship-definitions.js';
+import { calculateEntityPower } from './power-calculator.js';
+import { determineNpcMapType } from '../core/npc.js';
+
 // ES6 Module export
 export function initializeFactionData() {
     return {
@@ -52,7 +62,7 @@ export function initializeFactionData() {
  * Handles faction income generation and ship building.
  * This function should be called periodically (e.g., every 10 turns).
  */
-function processFactionIncomeAndBuilding() {
+export function processFactionIncomeAndBuilding() {
     logGalaxyEvent("Galactic Update: Faction income and building activities reported...", "neutral");
 
     for (const faction of [FACTION_DURAN, FACTION_VINARI, FACTION_TRADER]) {
@@ -99,7 +109,7 @@ function processFactionIncomeAndBuilding() {
  * This function should be called periodically for each faction (e.g., every 5 turns).
  * @param {string} faction - The faction (e.g., FACTION_DURAN, FACTION_VINARI, FACTION_TRADER).
  */
-function processFactionAction(faction) {
+export function processFactionAction(faction) {
     const factionFleetIds = game.factions[faction].ships || [];
     if (factionFleetIds.length === 0) return; // Faction needs ships to perform actions
 
@@ -361,7 +371,7 @@ function processFactionAction(faction) {
 }
 
 
-function logGalaxyEvent(message, type = 'neutral') {
+export function logGalaxyEvent(message, type = 'neutral') {
     const timestamp = `Turn: ${game.moveCount}`; // Use move count as a simple timestamp
     game.galaxyLog.unshift({ text: message, type: type, timestamp: timestamp });
     if (game.galaxyLog.length > game.maxGalaxyLogMessages) {

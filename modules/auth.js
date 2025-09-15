@@ -1,5 +1,10 @@
 // --- modules/auth.js ---
 
+import { game } from '../core/state.js';
+import { loadGame, initGame } from '../core/game.js';
+import { deepClone } from '../core/utilities.js';
+import { displayConsoleMessage, updateUI } from './ui.js';
+
 export const ACCOUNTS_STORAGE_KEY = 'cosmicTraderAccounts';
 
 /**
@@ -22,7 +27,7 @@ export function hideLoginModal() {
 /**
  * Handles the first step of login: submitting the player's callsign.
  */
-function handleNameSubmit() {
+export function handleNameSubmit() {
     const nameInput = document.getElementById('player-name-input');
     const playerName = nameInput.value.trim();
     const messageArea = document.getElementById('login-message-area');
@@ -54,7 +59,7 @@ function handleNameSubmit() {
 /**
  * Handles login for an existing player.
  */
-function handleLogin() {
+export function handleLogin() {
     const nameInput = document.getElementById('player-name-input');
     const passInput = document.getElementById('password-input');
     const playerName = nameInput.value.trim().toLowerCase();
@@ -76,7 +81,7 @@ function handleLogin() {
 /**
  * Handles creating a new player profile and starting the game.
  */
-function handleCreatePlayer() {
+export function handleCreatePlayer() {
     const nameInput = document.getElementById('player-name-input');
     const passInput = document.getElementById('new-password-input');
     const shipInput = document.getElementById('ship-name-input');

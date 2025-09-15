@@ -1,3 +1,6 @@
+// Import faction constants from naming-data.js
+import { FACTION_DURAN, FACTION_VINARI, FACTION_TRADER } from './naming-data.js';
+
 const FACTION_LORE = {
     [FACTION_DURAN]: {
         name: "The Duran Hegemony",

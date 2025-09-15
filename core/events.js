@@ -1,13 +1,22 @@
 // DOM and keyboard event listeners
 // ES6 Module imports
 
-import { showLoginModal } from '../modules/auth.js';
-import { initializeUI } from './state.js';
+import { showLoginModal, handleNameSubmit, handleLogin, handleCreatePlayer } from '../modules/auth.js';
+import { initializeUI, ui } from './state.js';
 import { triggerAction } from './actions.js';
+import { restartGame } from './game.js';
+import { displayManual, displayGalaxyLog, displayConsoleMessage } from '../modules/ui.js';
+import { attemptFirstAudioPlay } from '../modules/audio.js';
+import { displayPowerRankings } from '../modules/rankings.js';
+import { toggleSimulation } from './movement.js';
+import { perfMonitor } from '../modules/performance-monitor.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize UI references first
     initializeUI();
+
+    // Initialize performance monitoring
+    perfMonitor.init();
 
     // Event delegation for all buttons.
     document.body.addEventListener('click', (event) => {

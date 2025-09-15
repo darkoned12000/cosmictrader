@@ -2,17 +2,18 @@
 // Moved from script.js for better organization
 // ES6 Module with explicit imports
 
-import { getRandomInt, deepClone } from './utilities.js';
+import { getRandomInt, deepClone, getRandomImage, getRandomElement } from './utilities.js';
 import { displayConsoleMessage, updateUI } from '../modules/ui.js';
 import { initAudioControls, playSoundEffect } from '../modules/audio.js';
 import { resetLotteryState } from '../modules/lottery.js';
 import { initializeFactionData } from '../modules/factions.js';
-import { createNpcShip, FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../ship-definitions.js';
+import { createNpcShip, resetShipIdCounter, Ship } from '../ship-definitions.js';
+import { FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
 import { determineNpcMapType } from './npc.js';
-import { ui, initializeUI } from './state.js';
-import { ACCOUNTS_STORAGE_KEY } from '../modules/auth.js';
+import { game, ui, initializeUI } from './state.js';
+import { ACCOUNTS_STORAGE_KEY, startGame } from '../modules/auth.js';
 import { PORT_PREFIXES, PORT_SUFFIXES, SPACE_PORT_NAMES } from '../data/naming-data.js';
-import { planetTypes, planetOwnership, planetAtmospheres, planetNames, starNames, starTypes, hazardTypes, commodities, portTypes, portImages, spacePortImages } from '../data/game-data.js';
+import { planetTypes, planetOwnership, planetAtmospheres, planetNames, starNames, starTypes, hazardTypes, commodities, portTypes, portImages, spacePortImages, shipClasses } from '../data/game-data.js';
 
 // ---------------------------
 // --- GAME INITIALIZATION ---
@@ -42,7 +43,7 @@ export function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', 
     }
 
     // Reset core game state properties
-    if (typeof nextShipIdCounter !== 'undefined') nextShipIdCounter = 1;
+    resetShipIdCounter();
 	game.inCombatWith = null;
 	game.audioInitialized = false;
 	game.solarArrayDeployed = false;
