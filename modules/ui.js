@@ -11,7 +11,7 @@ import { calculateTradeIn } from './commerce.js';
 import { generateLotteryUI } from './lottery.js';
 import { generatePlanetDescription } from './planets.js';
 import { getRandomImage } from '../core/utilities.js';
-import { galacticBank } from './galactic-bank.js';
+import { galacticBank, INTEREST_RATE_PER_DAY } from './galactic-bank.js';
 
 export function displayConsoleMessage(message, type = 'neutral', sound = 'message_system') {
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -801,7 +801,7 @@ export function displayBankInterface() {
     playSoundEffect('ui_click');
 
     const balance = galacticBank.getBalance();
-    const interestRate = (galacticBank.constructor.INTEREST_RATE_PER_DAY * 100).toFixed(2);
+    const interestRate = (INTEREST_RATE_PER_DAY * 100).toFixed(2);
 
     ui.spacePortTitle.innerHTML = `Galactic Bank - Account: ${game.player.firstName} ${game.player.lastName}`;
     ui.spacePortControls.innerHTML = `
@@ -816,8 +816,11 @@ export function displayBankInterface() {
             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                 <button onclick="triggerAction('bankDeposit')">Deposit</button>
                 <button onclick="triggerAction('bankWithdraw')">Withdraw</button>
-                <button onclick="triggerAction('bankSetPIN')">Set PIN</button>
+                <button onclick="triggerAction('bankSetPIN')">${galacticBank.accounts[game.player.name]?.pin ? 'Reset PIN (50,000cr)' : 'Set PIN'}</button>
             </div>
+            <p style="color: yellow; font-size: 12px; margin-top: 10px;">
+                NOTE: To send credits to a NPC or Player you need to have a valid PIN (don't forget it)
+            </p>
             <hr style="border-color: #050; margin: 10px 0;">
             <button onclick="triggerAction('bankClose')">Close Bank</button>
         </div>

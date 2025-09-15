@@ -236,12 +236,26 @@ export function triggerAction(action, ...args) {
             break;
 
         case 'bankSetPIN':
-            const pin = prompt("Enter a 4-6 digit PIN for your bank account:");
+            const hasPIN = !!galacticBank.accounts[game.player.name]?.pin;
+            if (hasPIN) {
+                // Reset PIN - costs 50,000cr
+                if (game.player.credits < 50000) {
+                    displayConsoleMessage("Insufficient credits. Reset PIN costs 50,000cr.", 'error');
+                    return;
+                }
+                const confirmReset = confirm("Reset PIN costs 50,000cr. Proceed?");
+                if (!confirmReset) return;
+                game.player.credits -= 50000;
+                displayConsoleMessage("Paid 50,000cr for PIN reset.", 'info');
+            }
+            const pin = prompt(`${hasPIN ? 'Enter new' : 'Enter'} 4-6 digit PIN for your bank account:`);
             if (pin && /^\d{4,6}$/.test(pin)) {
                 galacticBank.setPIN(pin);
+                displayConsoleMessage(`PIN ${hasPIN ? 'reset' : 'set'} successfully.`, 'success');
             } else {
                 displayConsoleMessage("Invalid PIN. Must be 4-6 digits.", 'error');
             }
+            displayBankInterface(); // Refresh to update button text
             break;
 
         case 'bankClose':

@@ -9,7 +9,7 @@ import { displayConsoleMessage, updateUI } from './ui.js';
 import { playSoundEffect } from './audio.js';
 
 // --- Bank Constants ---
-const INTEREST_RATE_PER_DAY = 0.015; // 1.5% daily interest
+export const INTEREST_RATE_PER_DAY = 0.015; // 1.5% daily interest
 const MIN_DEPOSIT = 100;
 const MAX_WITHDRAWAL_FEE = 50; // Small fee for withdrawals
 const BANK_UPDATE_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
