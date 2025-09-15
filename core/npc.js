@@ -204,8 +204,8 @@ function tryNpcUpgrade(npc, equipType) {
         npc[equipType] = Math.min(npc[equipType], maxAmount);
     }
 
-    // Optional: Log upgrade for debugging
-    console.log(`${npc.ship_name} (${npc.faction}) upgraded ${equipType} for ${equipInfo.cost}cr`);
+    // Log upgrade for visibility
+    displayConsoleMessage(`${npc.ship_name} (${npc.faction}) upgraded ${equipType} (+${equipInfo.amount}) for ${equipInfo.cost}cr`, 'info');
 
     return true;
 }

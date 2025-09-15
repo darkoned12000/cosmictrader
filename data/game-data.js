@@ -574,5 +574,5 @@ export const FACTION_ACTION_PROBABILITIES = {
 
 // --- SIMULATION CONSTANTS ---
 // Consolidated from script.js for centralization
-export const SIMULATION_MODE_ENABLED = true; // Set to true to enable, false to disable
+export const SIMULATION_MODE_ENABLED = true; // Set to true to enable, false to disable - NPCs will move automatically
 export const SIMULATION_TICK_INTERVAL_MS = 250; // Time in milliseconds (e.g., 10000 = 10 seconds)
