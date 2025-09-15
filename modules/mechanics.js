@@ -75,6 +75,7 @@ function handleHazardEntry(sector) {
 
     // Check for ship destruction after taking hazard damage
     if (game.player.ship.hull <= 0) {
+        logGalaxyEvent(`Your ship, "${game.player.ship.name}", was destroyed by a ${hazardType}!`, 'error');
         displayConsoleMessage("CRITICAL HULL FAILURE! SHIP DESTROYED! GAME OVER!", 'error', 'ship_destroyed');
         initGame(); // Restart the game
     } else {
@@ -136,7 +137,7 @@ function handleNpcHazardImpact(npc, hazardData) {
         let damageReport = `(${npc.current_shields}/${npc.max_shields}S, ${npc.current_hull}/${npc.max_hull}H)`;
 
         if (npc.current_hull <= 0) {
-            logGalaxyEvent(`${message} and was **destroyed**!`, 'conflict');
+            logGalaxyEvent(`${message} and was <span style="color:red;">**Destroyed**!</span>`, 'conflict');
             return true; // NPC was destroyed
         } else {
             logGalaxyEvent(`${message}, taking ${damage} damage. ${damageReport}`, 'warning');
@@ -204,3 +205,5 @@ function deployMine() {
         playSoundEffect('error');
     }
 }
+
+

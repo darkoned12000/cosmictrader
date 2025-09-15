@@ -13,3 +13,53 @@ v0.04 - Added ship types, equipment for your ship
 v0.03 - Added Ports/Planets, worked on very basic trading and Space Port options
 v0.02 - Player Inventory / Sector Info
 v0.01 - Started Development :). Got the UI setup and got basic grid movement running
+
+
+
+Roadmap for NPC redesign (live world)
+
+Phase 1: NPC Basic Economy & Data Foundation (Starting Point)
+The goal of this phase is to establish the fundamental economic capabilities for individual NPC ships.
+
+Implement NPC Credits & Inventory:
+Modify the Ship class (in ship-definitions.js) to include credits and inventory properties for each NPC ship.
+Ensure createNpcShip initializes these new properties.
+Update loadGame (in script.js) to correctly rehydrate these new properties when a game is loaded.
+Simulate NPC Trading:
+When an NPC ship enters a port or spacePort (within moveNPCs in modules/factions.js), implement basic AI logic.
+NPCs will have a chance to buy or sell a random commodity based on their credits, inventory, available cargoSpace, and the port's prices/stock.
+Update both the NPC's and the port's credits and inventory accordingly.
+Simulate NPC Mining:
+When an NPC ship enters a planet (within moveNPCs in modules/factions.js), implement basic AI logic.
+NPCs will have a chance to "mine" a random resource from the planet's resources (e.g., ore, minerals).
+Update the NPC's inventory and the planet's resources.
+Phase 2: NPC Ship Maintenance & Self-Improvement
+Once NPCs can earn credits and resources, this phase focuses on them using those funds to maintain and enhance their individual ships.
+
+NPC Self-Repair:
+When a damaged NPC ship is at a port or spacePort (within moveNPCs or a new NPC AI function), implement logic for them to spend their personal credits to repair their hull and shields.
+Prioritize repairs if hull/shields are low.
+NPC Self-Upgrade/Replenishment:
+NPCs will use their personal credits to buy consumables like fuel, fighters, and missiles at space ports if their current stock is low.
+Expand to Permanent Upgrades: Introduce logic for NPCs to purchase permanent upgrades like additional maxShields, maxHull, or maxCargoSpace if they have sufficient funds, using equipmentCosts from game-data.js. This directly addresses making individual NPC ships "more powerful."
+Phase 3: Faction Taxation & Centralized Fleet Management
+This phase elevates faction growth beyond just commissioning new ships, incorporating strategic fleet maintenance and development funded by their members.
+
+Faction Taxation System:
+Implement a mechanism (e.g., within processFactionIncomeAndBuilding or a new function) where a percentage of the credits earned by individual NPC ships (their members) is automatically "taxed" and added to their respective faction's central credits pool. This provides a more organic income source for factions.
+Faction Strategic Spending:
+Expand the faction AI (within processFactionAction or a new function) to make strategic decisions on how to spend their collected credits:
+Fleet-wide Repairs: Spend faction funds to repair damaged ships across their entire fleet (e.g., allocate funds to repair the most damaged ships).
+Fleet-wide Upgrades: Invest in upgrading multiple ships in their fleet (e.g., increase max capacities for a type of ship, or replenish consumables for many ships).
+Commissioning New Ships: Continue to commission new ships, but now balancing this against the needs for repairs and upgrades of their existing fleet.
+Phase 4: Faction-Specific Infrastructure & Equipment
+This phase introduces specialized faction infrastructure to further differentiate their economic and military capabilities.
+
+Faction-Specific Equipment Data:
+Create separate equipment cost definitions (e.g., duranEquipmentCosts, vinariEquipmentCosts) in data/game-data.js to reflect their unique technologies and prices.
+Faction-Specific Space Ports:
+Modify initGame (in script.js) to generate some spacePort objects with specific faction ownership (Duran, Vinari). These ports would offer their faction's unique equipment.
+Create new spacePortImages for Duran and Vinari to give them a distinct visual identity.
+NPC AI Integration:
+NPCs will prioritize seeking out their own faction's space ports for repairs and upgrades, as these would offer their specific equipment or better prices.
+Neutral space ports would still offer general equipment.

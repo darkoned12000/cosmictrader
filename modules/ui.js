@@ -796,24 +796,41 @@ function displayGalaxyLog() {
     attemptFirstAudioPlay();
     playSoundEffect('ui_click');
 
-    ui.spacePortTitle.textContent = "Galaxy Log";
+    ui.spacePortTitle.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Galaxy Log</span>
+            <input type="text" id="galaxy-log-search" onkeyup="filterGalaxyLog()" placeholder="Search log..." style="margin-left: auto;">
+        </div>`;
     ui.spacePortBox.style.display = 'block';
 
-    let logHTML = '<div style="white-space: pre-wrap; overflow-y: auto; max-height: 300px;">';
+    let logHTML = '<div id="galaxy-log-container" style="white-space: pre-wrap; overflow-y: auto; max-height: 300px;">';
     if (game.galaxyLog.length === 0) {
         logHTML += '<p>No significant events recorded.</p>';
     } else {
         game.galaxyLog.forEach(entry => {
-            // We can add different colors based on event type later
             logHTML += `<div class="console-message console-message-${entry.type}"><strong>[${entry.timestamp}]</strong> ${entry.text}</div>`;
         });
     }
-    logHTML += '</div><div><button id="close-manual-button">Close Log</button></div>'; // Re-use the close button ID
+    logHTML += '</div><div><button id="close-manual-button">Close Log</button></div>';
 
     ui.spacePortControls.innerHTML = logHTML;
 
-    // The event listener for 'close-manual-button' in hideManual() will work for this too
     document.getElementById('close-manual-button').addEventListener('click', hideManual);
+}
+
+function filterGalaxyLog() {
+    const searchTerm = document.getElementById('galaxy-log-search').value.toLowerCase();
+    const logContainer = document.getElementById('galaxy-log-container');
+    const filteredLog = game.galaxyLog.filter(entry => entry.text.toLowerCase().includes(searchTerm));
+    let logHTML = '';
+    if (filteredLog.length === 0) {
+        logHTML += '<p>No matching events found.</p>';
+    } else {
+        filteredLog.forEach(entry => {
+            logHTML += `<div class="console-message console-message-${entry.type}"><strong>[${entry.timestamp}]</strong> ${entry.text}</div>`;
+        });
+    }
+    logContainer.innerHTML = logHTML;
 }
 
 /**

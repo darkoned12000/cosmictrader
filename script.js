@@ -2,7 +2,7 @@
 
 // --- SIMULATION MODE SETTINGS ---
 const SIMULATION_MODE_ENABLED = true; // Set to true to enable, false to disable
-const SIMULATION_TICK_INTERVAL_MS = 1000; // Time in milliseconds (e.g., 10000 = 10 seconds)
+const SIMULATION_TICK_INTERVAL_MS = 250; // Time in milliseconds (e.g., 10000 = 10 seconds)
 
 // --- GAME STATE ---
 const game = {
@@ -16,7 +16,7 @@ const game = {
     player: {
         x: 1,
         y: 1,
-        credits: 5000,
+        credits: 500000,
         ship: {},
         inventory: { ore: 0, food: 0, tech: 0, minerals: 0, organics: 0, artifacts: 0 },
         class: 'Starhawk Skiff',
@@ -143,7 +143,7 @@ function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShip
     // ensuring all properties from the shipClasses template are copied correctly.
     game.player = {
         x: 1, y: 1,
-        credits: 5000,
+        credits: 500000,
         inventory: { ore: 0, food: 0, tech: 0, minerals: 0, organics: 0, artifacts: 0 },
         class: 'Starhawk Skiff',
         viruses: [],

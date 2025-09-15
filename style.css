@@ -640,3 +640,19 @@ font-size: 14px;
 }
 
 /* ------------------------------ */
+/* --- Styles for Galaxy Log Search --- */
+.galaxy-log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+#galaxy-log-search {
+    background: #111;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 5px;
+    font-family: monospace;
+    width: 150px; /* Adjust width as needed */
+}
