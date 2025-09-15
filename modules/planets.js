@@ -1,7 +1,14 @@
 // --- planets.js ---
 
+// --- Planets Module Imports ---
+import { game } from '../core/state.js';
+import { displayConsoleMessage, updateUI } from './ui.js';
+import { playSoundEffect } from './audio.js';
+import { getRandomInt } from '../core/utilities.js';
+import { logGalaxyEvent } from './factions.js';
+
 // Generates the flavor text description for a planet
-function generatePlanetDescription(planet) {
+export function generatePlanetDescription(planet) {
     let desc = `The planet ${planet.name} is a ${planet.planetType} world. `;
 
     if (planet.temperature > 400) {
@@ -31,7 +38,7 @@ function generatePlanetDescription(planet) {
 
 // --- Action Handler Functions ---
 
-function handleScanPlanet() {
+export function handleScanPlanet() {
     const scanCost = 5;
     if (game.player.ship.fuel >= scanCost) {
         game.player.ship.fuel -= scanCost;
@@ -46,9 +53,14 @@ function handleScanPlanet() {
 }
 
 
-function handleMinePlanet() {
+export function handleMinePlanet() {
     // STEP 1: Get the planet object from the map first.
-    const planet = game.map[`${game.player.x},${game.player.y}`].data;
+    const currentSector = game.map[`${game.player.x},${game.player.y}`];
+    if (!currentSector || !currentSector.data) {
+        displayConsoleMessage("No planet found at current location.", "error");
+        return;
+    }
+    const planet = currentSector.data;
 
     // STEP 2: Check if the planet is depleted.
     if (planet && planet.resources) { // Added a check for planet itself
@@ -118,7 +130,7 @@ function handleMinePlanet() {
     updateUI();
 }
 
-function handleClaimPlanet() {
+export function handleClaimPlanet() {
     const claimCost = 25000;
     if (game.player.credits >= claimCost) {
         if (confirm(`Claim ${game.map[`${game.player.x},${game.player.y}`].data.name} for ${claimCost} credits?`)) {
@@ -137,7 +149,7 @@ function handleClaimPlanet() {
 }
 
 
-function handleLaunchInvasion() {
+export function handleLaunchInvasion() {
     const planet = game.map[`${game.player.x},${game.player.y}`].data;
     const playerForces = game.player.ship.gndForces;
 
@@ -198,7 +210,7 @@ function handleLaunchInvasion() {
 }
 
 
-function handleColonizePlanet() {
+export function handleColonizePlanet() {
     if (game.player.ship.gndForces <= 0) {
         displayConsoleMessage("You have no Colonist Pods to establish a colony. Purchase Ground Forces at a Spaceport.", "error");
         return;
@@ -230,14 +242,14 @@ function handleColonizePlanet() {
 }
 
 
-function handleSetupDefenses() {
+export function handleSetupDefenses() {
     // For now, this just opens the new UI screen.
     // We will add the logic to build/upgrade in the next step.
     displayDefenseManagement();
 }
 
 
-function handleDestroyPlanet() {
+export function handleDestroyPlanet() {
     const hasDetonators = true; // Placeholder: Replace with game.player.inventory.atomicDetonators > 0;
 
     if (hasDetonators) {

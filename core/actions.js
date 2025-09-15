@@ -1,6 +1,20 @@
 // Central handler for all player-triggered actions
 
-function triggerAction(action, ...args) {
+import { game, ui } from './state.js';
+import { attemptFirstAudioPlay, playSoundEffect } from '../modules/audio.js';
+import { displayConsoleMessage, updateUI } from '../modules/ui.js';
+import { move, warpToSector } from './movement.js';
+import { LOTTERY_PLAYS_RESET_INTERVAL_MOVES } from '../data/game-data.js';
+import { FACTION_TRADER } from '../data/naming-data.js';
+import { deployMine } from '../modules/mechanics.js';
+import { toggleSolarArray } from './movement.js';
+import { handleEditShipName, buyFuel, buyEquipment, upgradeScanner, buyWarpDrive, buyShip, trade, handleTradeAll, handleSellExotic, handleSellAllExotic, upgradePort, upgradePortSecurity, upgradeSoftware, removeViruses, attemptStealResources, attemptHackPort, attemptPurchasePort, payForTip } from '../modules/commerce.js';
+import { hailNPC } from './npc.js';
+import { startCombat, handleCombatRound, attemptFlee } from '../modules/combat.js';
+import { handleScanPlanet, handleMinePlanet, handleClaimPlanet, handleLaunchInvasion, handleColonizePlanet, handleSetupDefenses, handleDestroyPlanet } from '../modules/planets.js';
+import { handleLotteryNumberSubmission, focusLotteryInput } from '../modules/lottery.js';
+
+export function triggerAction(action, ...args) {
     attemptFirstAudioPlay();
     // playSoundEffect('ui_click'); // Already played by delegated listener for most buttons
 
@@ -204,3 +218,6 @@ function triggerAction(action, ...args) {
             break;
     }
 }
+
+// Make triggerAction globally available for HTML onclick handlers
+window.triggerAction = triggerAction;

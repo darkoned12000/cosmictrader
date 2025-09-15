@@ -1,6 +1,10 @@
 // --- AUDIO CONTROLS ---
+// ES6 Module exports
 
-function initAudioControls() {
+import { game, ui } from '../core/state.js';
+import { musicThemes } from '../data/game-data.js';
+
+export function initAudioControls() {
     ui.musicThemeSelect.innerHTML = '';
     musicThemes.forEach((t) => {
         const o = document.createElement('option');
@@ -60,7 +64,7 @@ function initAudioControls() {
             // game.sfxVolume is effectively 0 for playSoundEffect, no need to change master game.sfxVolume here
             // just ensure playSoundEffect respects a "muted" state or this direct change.
             // For simplicity, we'll set game.sfxVolume to 0 for mute, and restore it.
-            _currentSfxVol = game.sfxVolume; // temp store
+            const _currentSfxVol = game.sfxVolume; // temp store
             game.sfxVolume = 0;
 
 
@@ -82,20 +86,21 @@ function initAudioControls() {
     ui.sfxVolumeSlider.disabled = ui.muteCheckbox.checked;
 }
 
-function playSoundEffect(effectName) {
-    if (!game.audioInitialized || !soundEffects[effectName] || game.sfxVolume === 0) return; // Check game.sfxVolume for mute
-    try {
-        const sfxClone = ui.sfxAudio.cloneNode(); // Play multiple sounds concurrently
-        sfxClone.src = soundEffects[effectName];
-        sfxClone.volume = game.sfxVolume;
-        sfxClone.play().catch(e => console.warn(`SFX clone failed: ${effectName}`, e));
-        sfxClone.onended = () => sfxClone.remove(); // Clean up
-    } catch (e) {
-        console.warn(`SFX error for ${effectName}:`, e);
-    }
+export function playSoundEffect(effectName) {
+    // Sound effects temporarily disabled to prevent 404 errors
+    // if (!game.audioInitialized || !soundEffects[effectName] || game.sfxVolume === 0) return;
+    // try {
+    //     const sfxClone = ui.sfxAudio.cloneNode(); // Play multiple sounds concurrently
+    //     sfxClone.src = soundEffects[effectName];
+    //     sfxClone.volume = game.sfxVolume;
+    //     sfxClone.play().catch(e => console.warn(`SFX clone failed: ${effectName}`, e));
+    //     sfxClone.onended = () => sfxClone.remove(); // Clean up
+    // } catch (e) {
+    //     console.warn(`SFX error for ${effectName}:`, e);
+    // }
 }
 
-function attemptFirstAudioPlay() {
+export function attemptFirstAudioPlay() {
     if (!game.audioInitialized && ui.bgmAudio.src) {
         console.log("Attempting BGM...");
         ui.bgmAudio.play().then(() => {

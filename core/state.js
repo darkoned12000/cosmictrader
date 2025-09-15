@@ -1,6 +1,7 @@
 // Centralized game state and UI references
+// ES6 Module exports
 
-const game = {
+export const game = {
     mapSize: 5000,
     mapWidth: 100,
     mapHeight: 50,
@@ -64,10 +65,10 @@ const game = {
 };
 
 // UI object will be initialized after DOM is loaded
-let ui = {};
+export let ui = {};
 
 // Function to initialize UI references after DOM is ready
-function initializeUI() {
+export function initializeUI() {
     ui = {
         shipInfo: document.getElementById('ship-info'),
         invInfo: document.getElementById('inv-info'),

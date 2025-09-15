@@ -1,4 +1,9 @@
-const FIRST_NAMES = [
+// Faction constants (moved here to avoid circular dependency)
+export const FACTION_TRADER = "Trader";
+export const FACTION_DURAN = "Duran";
+export const FACTION_VINARI = "Vinari";
+
+export const FIRST_NAMES = [
     "Korgath", "T'Pral", "Quarkis", "Garoth", "Lwaxana", "Zevok", "Wicketta", "Vornak", "Salat", "Tuvix",
     "Brakiss", "J’onnar", "Qweev", "Lirath", "M’pok", "Sybok", "Dukat", "N’vek", "Romara", "Chirpa",
     "T’Lara", "Vorin", "Grelok", "Feris", "Betara", "Kweej", "Torg", "Vulan", "Zorin", "Yaddlek",
@@ -8,7 +13,7 @@ const FIRST_NAMES = [
     "Lyra", "Nova", "Aria", "Seraphina", "Astrid", "Thalia", "Zara", "Iris", "Juniper"
 ];
 
-const LAST_NAMES = [
+export const LAST_NAMES = [
     "K’tar", "V’lar", "Zolak", "Duras", "Troi’el", "Yubnub", "Skrain", "T’Pol", "Quarkon", "Moghra",
     "V’tek", "Wompat", "Garakith", "T’varis", "Bruntok", "Korgon", "L’Raan", "Zev’rok", "Tarkis", "S’vok",
     "Deanna’ra", "Wicketar", "Vorath", "Gul’ek", "T’Lani", "Romulak", "B’Tor", "Zibber", "Kweevok", "Martok",
@@ -19,7 +24,7 @@ const LAST_NAMES = [
 ];
 
 // New data structure for faction-specific final words.
-const FACTION_DEATH_CRIES = {
+export const FACTION_DEATH_CRIES = {
     [FACTION_DURAN]: [
         "For the Hegemony! Avenge my steel!",
         "My scales shatter, but our will endures!",
@@ -86,7 +91,7 @@ const FACTION_DEATH_CRIES = {
 };
 
 // --- Port and Space Port Naming Data ---
-const PORT_PREFIXES = [
+export const PORT_PREFIXES = [
 "Bloodforge", "Ironscale", "Grimclaw", "Warspike", "Ashen", // Duran-inspired
 "Starwoven", "Aetherial", "Glimmer", "Celestine", "Nebulous", // Vinari-inspired
 "Profit", "Sly", "Grubby", "Coin", "Hustle", // Trader-inspired
@@ -99,7 +104,7 @@ const PORT_PREFIXES = [
 "Lucky", "Shady", "Nifty", "Gilded", "Rust"
 ];
 
-const PORT_SUFFIXES = [
+export const PORT_SUFFIXES = [
 "Crag", "Maw", "Talon", "Anvil", "Pyre", // Duran-inspired
 "Shimmer", "Wisp", "Gleam", "Flux", "Sylph", // Vinari-inspired
 "Deal", "Haggle", "Stash", "Cartel", "Score", // Trader-inspired
@@ -112,7 +117,7 @@ const PORT_SUFFIXES = [
 "Chasm", "Beacon", "Pinnacle", "Drift", "Cluster"
 ];
 
-const SPACE_PORT_NAMES = [
+export const SPACE_PORT_NAMES = [
 "Krythos Ironmaw", // Duran stronghold
 "Bloodforge Citadel", // Duran fortress
 "Skullrend Bastion", // Duran warbase

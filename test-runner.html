@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Trader - Test Runner</title>
+    <style>
+        body { font-family: monospace; margin: 20px; background: #000; color: #0f0; }
+        .test-result { margin: 10px 0; padding: 10px; border: 1px solid #0f0; }
+        .pass { background: #002200; }
+        .fail { background: #220000; }
+        .error { background: #441100; }
+        button { background: #004400; color: #0f0; border: 1px solid #0f0; padding: 10px; margin: 5px; cursor: pointer; }
+        button:hover { background: #006600; }
+        .summary { font-weight: bold; font-size: 1.2em; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>🚀 Cosmic Trader Test Runner</h1>
+    <p>Run automated tests for your ES6 modules</p>
+
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="runUtilitiesTests()">Test Utilities</button>
+    <button onclick="runCommerceTests()">Test Commerce</button>
+    <button onclick="clearResults()">Clear Results</button>
+
+    <div id="test-results"></div>
+
+    <script type="module">
+        // Import test modules
+        import { runUtilitiesTestSuite } from './tests/utilities.test.js';
+        import { runCommerceTestSuite } from './tests/commerce.test.js';
+
+        window.testResults = [];
+        window.testStats = { passed: 0, failed: 0, total: 0 };
+
+        function addTestResult(testName, passed, message = '') {
+            const resultDiv = document.createElement('div');
+            resultDiv.className = `test-result ${passed ? 'pass' : 'fail'}`;
+            resultDiv.innerHTML = `
+                <strong>${passed ? '✅ PASS' : '❌ FAIL'}</strong>: ${testName}
+                ${message ? `<br><small>${message}</small>` : ''}
+            `;
+            document.getElementById('test-results').appendChild(resultDiv);
+
+            window.testStats.total++;
+            if (passed) {
+                window.testStats.passed++;
+            } else {
+                window.testStats.failed++;
+            }
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const existing = document.querySelector('.summary');
+            if (existing) existing.remove();
+
+            const summary = document.createElement('div');
+            summary.className = 'summary';
+            summary.innerHTML = `
+                📊 Test Summary: ${window.testStats.passed}/${window.testStats.total} passed
+                ${window.testStats.failed > 0 ? ` (${window.testStats.failed} failed)` : ''}
+            `;
+            document.getElementById('test-results').insertBefore(summary, document.getElementById('test-results').firstChild);
+        }
+
+        function clearResults() {
+            document.getElementById('test-results').innerHTML = '';
+            window.testStats = { passed: 0, failed: 0, total: 0 };
+        }
+
+        window.runAllTests = async function() {
+            clearResults();
+            await runUtilitiesTestSuite(addTestResult);
+            await runCommerceTestSuite(addTestResult);
+        };
+
+        window.runUtilitiesTests = async function() {
+            clearResults();
+            await runUtilitiesTestSuite(addTestResult);
+        };
+
+        window.runCommerceTests = async function() {
+            clearResults();
+            await runCommerceTestSuite(addTestResult);
+        };
+
+        window.clearResults = clearResults;
+        window.addTestResult = addTestResult;
+    </script>
+</body>
+</html>

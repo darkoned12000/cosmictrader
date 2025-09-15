@@ -3,7 +3,14 @@
  */
 // In modules/rankings.js
 
-function displayPowerRankings() {
+// --- Rankings Module Imports ---
+import { game, ui } from '../core/state.js';
+import { displayConsoleMessage, updateUI, hideActionView } from './ui.js';
+import { attemptFirstAudioPlay, playSoundEffect } from './audio.js';
+import { FACTION_DURAN, FACTION_VINARI, FACTION_TRADER } from '../data/naming-data.js';
+import { calculateEntityPower } from './power-calculator.js';
+
+export function displayPowerRankings() {
     attemptFirstAudioPlay();
     playSoundEffect('ui_click');
 

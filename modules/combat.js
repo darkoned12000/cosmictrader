@@ -1,7 +1,14 @@
 // This file contains all of the 'combat' logic for player and npc's
 
+// --- Combat Module Imports ---
+import { game, ui } from '../core/state.js';
+import { displayConsoleMessage, updateUI } from './ui.js';
+import { playSoundEffect } from './audio.js';
+import { getRandomInt } from '../core/utilities.js';
+import { toggleSolarArray } from '../core/movement.js';
+import { initGame } from '../core/game.js';
 
-function startCombat(npcShipObject) {
+export function startCombat(npcShipObject) {
     if (game.inCombatWith) {
         displayConsoleMessage(`Already in combat with ${game.inCombatWith.ship_name}!`, 'warning');
         return;
@@ -60,7 +67,7 @@ function engageCombat(npcShipObject) { // npcShipObject is now a Ship instance
 }
 
 
-function handleCombatRound(playerActionType) {
+export function handleCombatRound(playerActionType) {
     if (!game.inCombatWith) return;
 
     const playerShip = game.player.ship;
@@ -250,7 +257,7 @@ function handleCombatRound(playerActionType) {
 }
 
 
-function attemptFlee() {
+export function attemptFlee() {
     if (!game.inCombatWith) return;
 
     displayConsoleMessage("You attempt to disengage...", 'info');

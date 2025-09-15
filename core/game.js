@@ -1,9 +1,23 @@
 // --- GAME INITIALIZATION, SAVE, LOAD, RESTART ---
 // Moved from script.js for better organization
+// ES6 Module with explicit imports
+
+import { getRandomInt, deepClone, getRandomImage, getRandomElement } from './utilities.js';
+import { displayConsoleMessage, updateUI } from '../modules/ui.js';
+import { initAudioControls, playSoundEffect } from '../modules/audio.js';
+import { resetLotteryState } from '../modules/lottery.js';
+import { initializeFactionData } from '../modules/factions.js';
+import { createNpcShip, resetShipIdCounter, Ship } from '../ship-definitions.js';
+import { FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
+import { determineNpcMapType } from './npc.js';
+import { game, ui, initializeUI } from './state.js';
+import { ACCOUNTS_STORAGE_KEY, startGame } from '../modules/auth.js';
+import { PORT_PREFIXES, PORT_SUFFIXES, SPACE_PORT_NAMES } from '../data/naming-data.js';
+import { planetTypes, planetOwnership, planetAtmospheres, planetNames, starNames, starTypes, hazardTypes, commodities, portTypes, portImages, spacePortImages, shipClasses } from '../data/game-data.js';
 
 // ---------------------------
 // --- GAME INITIALIZATION ---
-function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShipName = 'Starhawk I') {
+export function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShipName = 'Starhawk I') {
     // Ensure UI is initialized before accessing DOM elements
     if (!ui.mapSizeSelect) {
         initializeUI();
@@ -29,7 +43,7 @@ function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShip
     }
 
     // Reset core game state properties
-    if (typeof nextShipIdCounter !== 'undefined') nextShipIdCounter = 1;
+    resetShipIdCounter();
 	game.inCombatWith = null;
 	game.audioInitialized = false;
 	game.solarArrayDeployed = false;
@@ -387,7 +401,7 @@ function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', newShip
 // NOTE: This could be removed later if I choose to add DB functionality
 
 // Save game state to localStorage
-function saveGame() {
+export function saveGame() {
     const playerName = game.player.firstName;
     if (!playerName) {
         console.error("Save failed: No player name found in current game state.");
@@ -410,7 +424,7 @@ function saveGame() {
 
 
 // Load game state from localStorage
-function loadGame(playerName) {
+export function loadGame(playerName) {
     if (!playerName) return;
     try {
         const accounts = JSON.parse(localStorage.getItem(ACCOUNTS_STORAGE_KEY));
@@ -487,7 +501,7 @@ function loadGame(playerName) {
 }
 
 
-function restartGame() {
+export function restartGame() {
     // Ensure UI is initialized before accessing DOM elements
     if (!ui.mapSizeSelect) {
         initializeUI();

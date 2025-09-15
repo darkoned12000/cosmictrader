@@ -1,4 +1,11 @@
 // --- NEW DATA STRUCTURE FOR ECONOMIC EVENTS ---
+// --- Economy Module Imports ---
+import { game } from '../core/state.js';
+import { displayConsoleMessage } from './ui.js';
+import { getRandomInt, getRandomElement } from '../core/utilities.js';
+import { commodities, shipClasses, equipmentCosts } from '../data/game-data.js';
+import { logGalaxyEvent } from './factions.js';
+
 const ECONOMIC_EVENTS = [
 {
     name: "Food Shortage",
@@ -305,7 +312,7 @@ const ECONOMIC_EVENTS = [
 
 
 // This function processes the lifecycle of economic events and regular price fluctuations.
-function updateEconomy() {
+export function updateEconomy() {
     // --- PART 1: Process and decrement active events ---
     // We iterate backwards so we can safely remove items from the array.
     for (let i = game.activeEconomicEvents.length - 1; i >= 0; i--) {
@@ -366,7 +373,7 @@ function updateEconomy() {
 
 
 // This function should remain in this file.
-function regeneratePortStock() {
+export function regeneratePortStock() {
     game.ports.forEach(p => {
         const r = 1000; // Stock regeneration divisor
         const b = 1; // Minimum stock increment
@@ -392,7 +399,7 @@ function regeneratePortStock() {
 }
 
 
-function processColonyProduction() {
+export function processColonyProduction() {
     const playerPlanets = game.planets.filter(p => p.ownership === game.player.name && p.colony.population > 0);
 
     if (playerPlanets.length === 0) return;

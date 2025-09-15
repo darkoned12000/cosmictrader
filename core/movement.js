@@ -1,6 +1,18 @@
 // Handles player movement, warping, simulation, and related effects
 
-function move(direction) {
+import { game, ui } from './state.js';
+import { displayConsoleMessage, updateUI, displayArrivalMessage, updateShipStatus } from '../modules/ui.js';
+import { playSoundEffect } from '../modules/audio.js';
+import { GAME_LOOP_INTERVALS, virusTypes, SIMULATION_TICK_INTERVAL_MS } from '../data/game-data.js';
+import { FACTION_DURAN, FACTION_VINARI, FACTION_TRADER } from '../data/naming-data.js';
+import { processFactionIncomeAndBuilding, processFactionAction } from '../modules/factions.js';
+import { regeneratePortStock, updateEconomy } from '../modules/economy.js';
+import { handleHazardEntry } from '../modules/mechanics.js';
+import { moveNPCs } from './npc.js';
+import { checkLotteryPeriodReset } from '../modules/lottery.js';
+import { initializeUI } from './state.js';
+
+export function move(direction) {
     if (game.inCombatWith) {
         displayConsoleMessage("Cannot move while in combat!", "warning");
         return;
@@ -87,7 +99,7 @@ function move(direction) {
     }
 }
 
-function warpToSector() {
+export function warpToSector() {
     if (game.inCombatWith) {
         displayConsoleMessage("Cannot warp while in combat!", "warning");
         return;
@@ -171,7 +183,7 @@ function warpToSector() {
 /**
  * Executes a single "turn" of the game without player input, for simulation mode.
  */
-function toggleSimulation() {
+export function toggleSimulation() {
     if (game.isSimulationRunning) {
         // --- STOP THE SIMULATION ---
         clearInterval(game.simulationIntervalId);
@@ -192,7 +204,7 @@ function toggleSimulation() {
     updateUI();
 }
 
-function runSimulationTick() {
+export function runSimulationTick() {
     console.log(`--- Simulation Tick ${game.moveCount + 1} ---`);
     displayConsoleMessage(`SIMULATION: Processing turn ${game.moveCount + 1}...`, 'minor');
 
@@ -226,7 +238,7 @@ function runSimulationTick() {
 }
 
 // Function to apply virus effects and decrement duration
-function applyVirusEffects() {
+export function applyVirusEffects() {
     // Create a copy to iterate while potentially modifying the original array
     const activeViruses = [...game.player.viruses];
     game.player.viruses = activeViruses.filter(virus => {
@@ -248,7 +260,7 @@ function applyVirusEffects() {
 }
 
 // Solar Array
-function toggleSolarArray() {
+export function toggleSolarArray() {
     // Ensure UI is initialized
     if (!ui.deploySolarArrayButton) {
         initializeUI();

@@ -1,11 +1,16 @@
 // --- modules/auth.js ---
 
-const ACCOUNTS_STORAGE_KEY = 'cosmicTraderAccounts';
+import { game } from '../core/state.js';
+import { loadGame, initGame } from '../core/game.js';
+import { deepClone } from '../core/utilities.js';
+import { displayConsoleMessage, updateUI } from './ui.js';
+
+export const ACCOUNTS_STORAGE_KEY = 'cosmicTraderAccounts';
 
 /**
  * Displays the login modal over the blurred game UI.
  */
-function showLoginModal() {
+export function showLoginModal() {
     document.getElementById('main-ui').classList.add('blurred');
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('player-name-input').focus();
@@ -14,7 +19,7 @@ function showLoginModal() {
 /**
  * Hides the login modal and un-blurs the game UI.
  */
-function hideLoginModal() {
+export function hideLoginModal() {
     document.getElementById('main-ui').classList.remove('blurred');
     document.getElementById('login-screen').style.display = 'none';
 }
@@ -22,7 +27,7 @@ function hideLoginModal() {
 /**
  * Handles the first step of login: submitting the player's callsign.
  */
-function handleNameSubmit() {
+export function handleNameSubmit() {
     const nameInput = document.getElementById('player-name-input');
     const playerName = nameInput.value.trim();
     const messageArea = document.getElementById('login-message-area');
@@ -54,7 +59,7 @@ function handleNameSubmit() {
 /**
  * Handles login for an existing player.
  */
-function handleLogin() {
+export function handleLogin() {
     const nameInput = document.getElementById('player-name-input');
     const passInput = document.getElementById('password-input');
     const playerName = nameInput.value.trim().toLowerCase();
@@ -76,7 +81,7 @@ function handleLogin() {
 /**
  * Handles creating a new player profile and starting the game.
  */
-function handleCreatePlayer() {
+export function handleCreatePlayer() {
     const nameInput = document.getElementById('player-name-input');
     const passInput = document.getElementById('new-password-input');
     const shipInput = document.getElementById('ship-name-input');
@@ -112,7 +117,7 @@ function handleCreatePlayer() {
 /**
  * Finalizes the login/creation process.
  */
-function startGame() {
+export function startGame() {
     hideLoginModal();
     updateUI();
 }
