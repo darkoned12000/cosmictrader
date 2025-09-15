@@ -17,7 +17,7 @@ const FACTION_LORE = {
         appearance: "Scaly, insectoid warriors with glowing red eyes, clad in battle-armor"
     },
     [FACTION_VINARI]: {
-        name: "The Duran Hegemony",
+        name: "Vinari Collective",
         background: "The Vinari Collective is a decentralized alliance of bio-luminescent, semi-corporeal beings native to Celestara, a lush, H2O-rich planet orbiting a G-Type star. Evolving in a nebula-shrouded system, the Vinari developed a symbiotic biology, blending organic tissues with energy-based structures, allowing them to manipulate electromagnetic fields. Their appearance is fluid, resembling glowing, humanoid shapes with tendril-like appendages, which inspired their sleek, organic ships (e.g., Celestryn Spire). Their society is nomadic, organized into migratory fleets that explore the galaxy, seeking knowledge and harmony with cosmic forces.<br> Vinari culture is deeply spiritual, viewing the universe as a living entity they must commune with. Their technology integrates bio-energy, with ships grown from crystalline seeds rather than built. Their settlements are temporary, often on habitable worlds like Elara or Sylvara, where they leave behind glowing monuments. They lack a central government, instead making decisions through telepathic consensus, which outsiders find chaotic but effective. Their history is peaceful but marked by evasion of threats, including early Duran invasions.",
 
         philosophy: "The Vinari embrace “Flow with the Cosmos,” believing all life is interconnected and guided by universal energies. They value exploration, adaptability, and preservation, avoiding conflict unless necessary. Knowledge is sacred, and they seek to understand stars, planets, and even hazards like Black Holes to align with the galaxy’s rhythm.",
@@ -31,7 +31,7 @@ const FACTION_LORE = {
         appearance: "Glowing, fluid forms with shifting colors, like living auroras"
     },
     [FACTION_TRADER]: {
-        name: "The Duran Hegemony",
+        name: "Independent Traders Guild",
         background: "The Independent Traders Guild is a loose coalition of humanoid Terrans, descended from Earth-like colonies scattered across G-Type and K-Type star systems, such as Elara (N2-O2 atmosphere). Originating from a failed federation, the Terrans turned to commerce for survival, forming the Guild to navigate a galaxy dominated by powers like the Duran and Vinari. Their ships are pragmatic, retrofitted for trade and survival, ranging from small shuttles to massive freighters. Guild hubs are bustling space stations or neutral planets like Vionis, where diverse cultures mingle.<br> Terran society is individualistic, driven by profit and opportunity. The Guild lacks a unified government, operating through merchant councils that prioritize trade routes over ideology. Their technology is eclectic, blending salvaged alien tech with human ingenuity, evident in their versatile but unpolished ships. Their history is one of adaptation, thriving in the shadows of larger empires by exploiting their conflicts and needs.",
 
         philosophy: "The Traders follow “Profit Through Opportunity,” believing wealth and survival come from exploiting every situation. They’re neutral, aligning with whoever pays best, but maintain a code of mutual benefit to avoid collapse. They value freedom and distrust centralized power, seeing it as a threat to their independence.",

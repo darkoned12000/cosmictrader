@@ -2,7 +2,7 @@
 // ES6 Module export
 
 // Import name data, faction constants, ship classes, and utilities
-import { FIRST_NAMES, LAST_NAMES, FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
+import { DURAN_FIRST_NAME, DURAN_LAST_NAME, VINARI_FIRST_NAME, VINARI_LAST_NAME, TRADER_FIRST_NAME, TRADER_LAST_NAME, FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
 import { shipClasses } from '../data/game-data.js';
 import { getRandomElement, getRandomInt } from '../core/utilities.js';
 export class Ship {
@@ -166,8 +166,24 @@ export function resetShipIdCounter() {
 
 // --- Main NPC Name Generation Function ---
 function generateNpcIdentity(faction, ship_class) {
-    const captainFirstName = getRandomElement(FIRST_NAMES);
-    const captainLastName = (Math.random() < 0.8) ? getRandomElement(LAST_NAMES) : ""; // 80% chance of having a last name
+    let firstNames, lastNames;
+    if (faction === FACTION_DURAN) {
+        firstNames = DURAN_FIRST_NAME;
+        lastNames = DURAN_LAST_NAME;
+    } else if (faction === FACTION_VINARI) {
+        firstNames = VINARI_FIRST_NAME;
+        lastNames = VINARI_LAST_NAME;
+    } else if (faction === FACTION_TRADER) {
+        firstNames = TRADER_FIRST_NAME;
+        lastNames = TRADER_LAST_NAME;
+    } else {
+        // Fallback to Trader names
+        firstNames = TRADER_FIRST_NAME;
+        lastNames = TRADER_LAST_NAME;
+    }
+
+    const captainFirstName = getRandomElement(firstNames);
+    const captainLastName = (Math.random() < 0.8) ? getRandomElement(lastNames) : ""; // 80% chance of having a last name
     const captainName = `${captainFirstName} ${captainLastName}`.trim();
 
     const shipName = generateShipName(faction, ship_class); // We can still use the old function for the ship name

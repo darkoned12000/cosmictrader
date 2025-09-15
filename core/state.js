@@ -46,6 +46,7 @@ export const game = {
     simulationIntervalId: null,
     isSimulationRunning: false,
     nextEconomicEventTurn: 0,
+    saveData: {}, // For persistent data like bank accounts
 	lottery: {
         isActive: false,        // Is the lottery UI currently displayed?
         stage: 'pick',          // Current stage: 'pick', 'drawing', 'results'

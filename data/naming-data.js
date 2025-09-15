@@ -3,6 +3,7 @@ export const FACTION_TRADER = "Trader";
 export const FACTION_DURAN = "Duran";
 export const FACTION_VINARI = "Vinari";
 
+/*
 export const FIRST_NAMES = [
     "Korgath", "T'Pral", "Quarkis", "Garoth", "Lwaxana", "Zevok", "Wicketta", "Vornak", "Salat", "Tuvix",
     "Brakiss", "J’onnar", "Qweev", "Lirath", "M’pok", "Sybok", "Dukat", "N’vek", "Romara", "Chirpa",
@@ -22,6 +23,81 @@ export const LAST_NAMES = [
     "Volkov", "Orlov", "Stark", "Vance", "Cross", "Valerius", "Blackwood", "Dresden", "Kincaid", "Thorne", "Vega",
     "Ryder", "Corbin", "Silas", "Drake", "Sterling", "Lander", "Creed", "Joric", "Griffin"
 ];
+*/
+
+// ------------------------------------------------------------------
+// DURAN – FIRST NAMES   (30 names)
+// ------------------------------------------------------------------
+export const DURAN_FIRST_NAME = [
+  "Korgath",   "T’Pral",    "Gorvak",   "Vortuk",   "Draxel",
+  "Krulak",    "T'Rok",     "Zarkon",   "Varnik",   "Dravos",
+  "Korvax",    "Tharrok",   "Brunak",   "Kethra",   "Rivox",
+  "Gorath",    "Malkur",    "Nexor",    "Tarvak",   "Varkel",
+  "Durok",     "Braxen",    "Zovrak",   "Kryth",    "Tarnok",
+  "Yulgar",    "Skrath",    "Praxus",   "Wyrn",     "Jekor",
+  "Varkon",    "Rothak"
+];
+
+// ------------------------------------------------------------------
+// DURAN – LAST NAMES   (30 names)
+// ------------------------------------------------------------------
+export const DURAN_LAST_NAME = [
+  "K’tar",     "V’lar",     "Zolak",    "Duras",    "Troi’el",
+  "Yubnub",    "Skrain",    "T’Pol",    "Quarkon",  "Moghra",
+  "V’tek",     "Wompat",    "Garakith", "T’varis",  "Bruntok",
+  "Korgon",    "L’Raan",    "Zev’rok",  "Tarkis",   "S’vok",
+  "Frothak",   "Grunthor",  "Pyril",    "Jarnak",   "Hovrak",
+  "Draxen",    "Vorthel",   "Kryss",    "Lurath",   "Narkel"
+];
+
+// ------------------------------------------------------------------
+// VINARI – FIRST NAMES   (30 names)
+// ------------------------------------------------------------------
+export const VINARI_FIRST_NAME = [
+  "Lwaxana",   "Zevoka",     "Wicketta",  "Salara",   "Quorin",
+  "Niraya",    "Talisa",     "Aelira",    "Elorin",   "Syrion",
+  "Liora",     "Vayla",      "Kaleena",   "Rilith",   "Synera",
+  "Elaris",    "Yavina",     "Teralin",   "Marae",    "Doriana",
+  "Silvana",   "Elowen",     "Arionel",   "Jalira",   "Kavira",
+  "Nirith",    "Rohani",     "Silaris",   "Talorin",  "Yelara"
+];
+
+// ------------------------------------------------------------------
+// VINARI – LAST NAMES   (30 names)
+// ------------------------------------------------------------------
+export const VINARI_LAST_NAME = [
+  "L’raeth",   "Vaylith",    "Korinor",   "Syrial",   "Talion",
+  "Aelaris",   "Maraeon",    "Rilithar",  "Elarinex", "Teralis",
+  "Yavino",    "Nirath",     "Quoriniel", "Syrionik", "Lwaxanar",
+  "Zevorin",   "Karneth",    "Silaron",   "Rilithar", "Velarin",
+  "Aelith",    "Miroth",     "Taloran",   "Vaylen",   "Nirathis"
+];
+
+// ------------------------------------------------------------------
+// TRADER – FIRST NAMES   (30 names)
+// ------------------------------------------------------------------
+export const TRADER_FIRST_NAME = [
+  "Jaxon",     "Kai",        "Ryder",     "Silas",    "Drake",
+  "Corbin",    "Mirae",      "Vega",      "Orion",    "Nico",
+  "Lysander",  "Thorne",     "Sable",     "Quinn",    "Arlo",
+  "Jade",      "Kellan",     "Tessa",     "Rory",     "Nova",
+  "Elias",     "Mara",       "Felix",     "Cora",     "Blaise",
+  "Ari",       "Dax",        "Luna",      "Finn",     "Zara"
+];
+
+// ------------------------------------------------------------------
+// TRADER – LAST NAMES   (30 names)
+// ------------------------------------------------------------------
+export const TRADER_LAST_NAME = [
+  "Stark",     "Cross",      "Valerius",  "Blackwood","Dresden",
+  "Kincaid",   "Vance",      "Thorne",    "Silva",    "Ryder",
+  "Corbin",    "Sterling",   "Lander",    "Creed",    "Griffin",
+  "Hawthorne", "Ashford",    "Bennett",   "McAllister","Parker",
+  "Reynolds",  "Fletcher",   "Graham",    "Holmes",   "Morris",
+  "Quinn",     "Wright",     "Ellis",     "Grant",    "Holt"
+];
+
+
 
 // New data structure for faction-specific final words.
 export const FACTION_DEATH_CRIES = {
