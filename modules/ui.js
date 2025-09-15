@@ -11,6 +11,7 @@ import { calculateTradeIn } from './commerce.js';
 import { generateLotteryUI } from './lottery.js';
 import { generatePlanetDescription } from './planets.js';
 import { getRandomImage } from '../core/utilities.js';
+import { galacticBank } from './galactic-bank.js';
 
 export function displayConsoleMessage(message, type = 'neutral', sound = 'message_system') {
     const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -598,6 +599,7 @@ export function updateInteraction() {
 export function generateSpaceportServicesHTML() {
     let h = '';
     h += `<div><p>Refuel:</p><button onclick="triggerAction('buyFuel')" ${game.player.credits<equipmentCosts.fuel.unitCost||game.player.ship.fuel>=game.player.ship.maxFuel?'disabled':''}>Fuel(${equipmentCosts.fuel.unitCost}/u)</button><label>Amt:</label><input type="number" id="buy-fuel-amount" min="1" value="100" style="width:60px;"></div>`;
+    h += `<div><p>Banking:</p><button onclick="triggerAction('accessBank')">Access Bank</button></div>`;
     h += `<div><p>Equip:</p><div class="button-group">`;
     for (const t in equipmentCosts) {
         if (t === 'fuel') continue;
@@ -794,10 +796,39 @@ export function displayManual() {
     // so when the player moves, the manual view will be replaced by the location view.
 }
 
+export function displayBankInterface() {
+    attemptFirstAudioPlay();
+    playSoundEffect('ui_click');
+
+    const balance = galacticBank.getBalance();
+    const interestRate = (galacticBank.constructor.INTEREST_RATE_PER_DAY * 100).toFixed(2);
+
+    ui.spacePortTitle.innerHTML = `Galactic Bank - Account: ${game.player.firstName} ${game.player.lastName}`;
+    ui.spacePortControls.innerHTML = `
+        <div style="padding: 10px;">
+            <p><strong>Current Balance:</strong> ${balance.toLocaleString()} credits</p>
+            <p><strong>Daily Interest Rate:</strong> ${interestRate}%</p>
+            <hr style="border-color: #050;">
+            <div style="margin-bottom: 10px;">
+                <label for="bank-amount">Amount:</label>
+                <input type="number" id="bank-amount" min="100" value="1000" style="width: 100px; margin-left: 10px;">
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button onclick="triggerAction('bankDeposit')">Deposit</button>
+                <button onclick="triggerAction('bankWithdraw')">Withdraw</button>
+                <button onclick="triggerAction('bankSetPIN')">Set PIN</button>
+            </div>
+            <hr style="border-color: #050; margin: 10px 0;">
+            <button onclick="triggerAction('bankClose')">Close Bank</button>
+        </div>
+    `;
+    ui.spacePortBox.style.display = 'block';
+}
+
 export function hideManual() {
-     // This function is called when the "Close Manual" button is clicked
-     // It simply calls updateUI, which will re-render the interaction box
-     // based on the current location (which will hide the manual unless at a location)
+      // This function is called when the "Close Manual" button is clicked
+      // It simply calls updateUI, which will re-render the interaction box
+      // based on the current location (which will hide the manual unless at a location)
      playSoundEffect('ui_click'); // Sound for closing manual
      updateUI();
 }

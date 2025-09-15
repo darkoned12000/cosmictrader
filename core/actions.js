@@ -9,6 +9,8 @@ import { FACTION_TRADER } from '../data/naming-data.js';
 import { deployMine } from '../modules/mechanics.js';
 import { toggleSolarArray } from './movement.js';
 import { handleEditShipName, buyFuel, buyEquipment, upgradeScanner, buyWarpDrive, buyShip, trade, handleTradeAll, handleSellExotic, handleSellAllExotic, upgradePort, upgradePortSecurity, upgradeSoftware, removeViruses, attemptStealResources, attemptHackPort, attemptPurchasePort, payForTip } from '../modules/commerce.js';
+import { displayBankInterface } from '../modules/ui.js';
+import { galacticBank } from '../modules/galactic-bank.js';
 import { hailNPC } from './npc.js';
 import { startCombat, handleCombatRound, attemptFlee } from '../modules/combat.js';
 import { handleScanPlanet, handleMinePlanet, handleClaimPlanet, handleLaunchInvasion, handleColonizePlanet, handleSetupDefenses, handleDestroyPlanet } from '../modules/planets.js';
@@ -211,6 +213,40 @@ export function triggerAction(action, ...args) {
                     displayConsoleMessage("No suitable installation to attack here.", "error");
                 }
                 break; // Don't forget the break!
+
+        case 'accessBank':
+            const sector = game.map[`${game.player.x},${game.player.y}`];
+            if (!sector || sector.type !== 'spacePort') {
+                displayConsoleMessage("Banking services are only available at Space Ports.", 'error');
+                return;
+            }
+            displayBankInterface();
+            break;
+
+        case 'bankDeposit':
+            const depositAmount = parseInt(document.getElementById('bank-amount')?.value) || 0;
+            galacticBank.deposit(depositAmount);
+            displayBankInterface(); // Refresh UI
+            break;
+
+        case 'bankWithdraw':
+            const withdrawAmount = parseInt(document.getElementById('bank-amount')?.value) || 0;
+            galacticBank.withdraw(withdrawAmount);
+            displayBankInterface(); // Refresh UI
+            break;
+
+        case 'bankSetPIN':
+            const pin = prompt("Enter a 4-6 digit PIN for your bank account:");
+            if (pin && /^\d{4,6}$/.test(pin)) {
+                galacticBank.setPIN(pin);
+            } else {
+                displayConsoleMessage("Invalid PIN. Must be 4-6 digits.", 'error');
+            }
+            break;
+
+        case 'bankClose':
+            updateUI(); // Return to normal spaceport view
+            break;
 
         default:
             console.warn("Unknown action triggered:", action);
