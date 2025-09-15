@@ -6,7 +6,7 @@ import { displayConsoleMessage, updateUI } from '../modules/ui.js';
 import { playSoundEffect } from '../modules/audio.js';
 import { handleNpcHazardImpact } from '../modules/mechanics.js';
 import { FACTION_TRADER, FACTION_VINARI, FACTION_DURAN } from '../data/naming-data.js';
-import { equipmentCosts } from '../data/game-data.js';
+import { equipmentCosts, scannerModels } from '../data/game-data.js';
 import { getRandomInt, getRandomElement } from './utilities.js';
 
 /**
@@ -156,14 +156,14 @@ export function handleNpcUpgrades(npc) {
     // Determine upgrade priorities based on faction
     let priorities = [];
     if (npc.faction === FACTION_DURAN) {
-        // Duran: Military focus - prioritize hull, shields, fighters, missiles
-        priorities = ['hull', 'shields', 'fighters', 'missiles', 'mines'];
+        // Duran: Military focus - prioritize hull, shields, fighters, missiles, scanners
+        priorities = ['hull', 'shields', 'fighters', 'missiles', 'mines', 'scanner', 'computer', 'warp'];
     } else if (npc.faction === FACTION_VINARI) {
-        // Vinari: Tech focus - prioritize scanners, cloak, shields
-        priorities = ['cloakEnergy', 'shields', 'hull', 'fighters'];
+        // Vinari: Tech focus - prioritize scanners, cloak, shields, computer
+        priorities = ['scanner', 'cloakEnergy', 'shields', 'hull', 'fighters', 'computer', 'warp'];
     } else if (npc.faction === FACTION_TRADER) {
-        // Trader: Commerce focus - prioritize cargo, fuel, shields
-        priorities = ['cargoSpace', 'fuel', 'shields', 'hull'];
+        // Trader: Commerce focus - prioritize cargo, fuel, shields, warp
+        priorities = ['cargoSpace', 'fuel', 'shields', 'hull', 'scanner', 'computer', 'warp'];
     }
 
     // Check each priority for potential upgrades
@@ -182,30 +182,84 @@ export function handleNpcUpgrades(npc) {
  * @returns {boolean} - True if upgrade was successful
  */
 function tryNpcUpgrade(npc, equipType) {
-    const equipInfo = equipmentCosts[equipType];
-    if (!equipInfo) return false;
+    let cost = 0;
+    let canUpgrade = false;
+    let upgradeDesc = '';
 
-    const currentAmount = npc[equipType] || 0;
-    const maxAmount = npc[equipInfo.max] || Infinity;
+    if (equipType === 'scanner') {
+        // Scanner upgrade logic
+        const currentModel = npc.scanner.model;
+        let nextModel = null;
+        if (currentModel === 'Basic') nextModel = 'Standard';
+        else if (currentModel === 'Standard') nextModel = 'Advanced';
 
-    // Check if upgrade is possible
-    if (currentAmount >= maxAmount || npc.credits < equipInfo.cost) {
-        return false;
-    }
-
-    // Perform upgrade
-    npc.credits -= equipInfo.cost;
-    if (equipType === 'fuel') {
-        // Fuel is special - refill to max
-        npc.fuel = Math.min(npc.maxFuel, npc.fuel + equipInfo.amount);
+        if (nextModel && scannerModels[nextModel]) {
+            cost = scannerModels[nextModel].cost;
+            if (npc.credits >= cost) {
+                canUpgrade = true;
+                upgradeDesc = `scanner to ${nextModel}`;
+                // Perform upgrade
+                npc.credits -= cost;
+                npc.scanner = { model: nextModel, range: scannerModels[nextModel].range };
+            }
+        }
+    } else if (equipType === 'computer') {
+        // Computer upgrade logic
+        const currentLevel = npc.computerLevel || 1;
+        const maxLevel = 10;
+        if (currentLevel < maxLevel) {
+            cost = currentLevel * 10000 + 5000; // Same as player
+            if (npc.credits >= cost) {
+                canUpgrade = true;
+                upgradeDesc = `computer to level ${currentLevel + 1}`;
+                npc.credits -= cost;
+                npc.computerLevel = currentLevel + 1;
+            }
+        }
+    } else if (equipType === 'warp') {
+        // Warp drive purchase
+        if (npc.warpDrive !== 'Installed') {
+            cost = 5000; // Same as player
+            if (npc.credits >= cost) {
+                canUpgrade = true;
+                upgradeDesc = 'warp drive';
+                npc.credits -= cost;
+                npc.warpDrive = 'Installed';
+            }
+        }
     } else {
-        npc[equipType] += equipInfo.amount;
-        // Ensure we don't exceed max
-        npc[equipType] = Math.min(npc[equipType], maxAmount);
+        // Regular equipment
+        const equipInfo = equipmentCosts[equipType];
+        if (!equipInfo) return false;
+
+        const currentAmount = npc[equipType] || 0;
+        const maxAmount = npc[equipInfo.max] || Infinity;
+
+        // Check if upgrade is possible
+        if (currentAmount >= maxAmount || npc.credits < equipInfo.cost) {
+            return false;
+        }
+
+        cost = equipInfo.cost;
+        canUpgrade = true;
+        upgradeDesc = `${equipType} (+${equipInfo.amount})`;
+
+        // Perform upgrade
+        npc.credits -= cost;
+        if (equipType === 'fuel') {
+            // Fuel is special - refill to max
+            npc.fuel = Math.min(npc.maxFuel, npc.fuel + equipInfo.amount);
+        } else {
+            npc[equipType] += equipInfo.amount;
+            // Ensure we don't exceed max
+            npc[equipType] = Math.min(npc[equipType], maxAmount);
+        }
     }
 
-    // Log upgrade for visibility
-    displayConsoleMessage(`${npc.ship_name} (${npc.faction}) upgraded ${equipType} (+${equipInfo.amount}) for ${equipInfo.cost}cr`, 'info');
+    if (canUpgrade) {
+        displayConsoleMessage(`${npc.ship_name} (${npc.faction}) upgraded ${upgradeDesc} for ${cost}cr`, 'info');
+        return true;
+    }
 
-    return true;
+    return false;
 }
