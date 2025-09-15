@@ -239,6 +239,7 @@ The key is implementing these features incrementally, starting with basic econom
 2. Basic NPC trading at ports
 3. Planet mining mechanics
 4. Equipment upgrade expansion
+5. NPC equipment upgrades at spaceports (purpose-driven)
 
 ### Phase 2: Intelligence
 1. Strategic movement AI

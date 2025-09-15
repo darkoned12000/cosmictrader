@@ -6,6 +6,7 @@ import { displayConsoleMessage, updateUI } from '../modules/ui.js';
 import { playSoundEffect } from '../modules/audio.js';
 import { handleNpcHazardImpact } from '../modules/mechanics.js';
 import { FACTION_TRADER, FACTION_VINARI, FACTION_DURAN } from '../data/naming-data.js';
+import { equipmentCosts } from '../data/game-data.js';
 import { getRandomInt, getRandomElement } from './utilities.js';
 
 /**
@@ -104,6 +105,11 @@ export function moveNPCs() {
                     // If moving into an occupied sector (e.g., another NPC), the NPC is now logically there,
                     // but the map symbol might still show the other entity. This is an existing limitation.
                 }
+
+                // Check for upgrades at spaceport
+                if (targetSectorContent && targetSectorContent.type === 'spacePort') {
+                    handleNpcUpgrades(npc);
+                }
             }
         }
     });
@@ -135,4 +141,71 @@ export function hailNPC() {
     }
     displayConsoleMessage(responseMessage, messageType, sound);
     // updateUI(); // updateUI is usually called by the action that triggered hailNPC, or after move.
+}
+
+/**
+ * Handles NPC equipment upgrades at spaceports based on faction priorities
+ * @param {object} npc - The NPC ship object
+ */
+export function handleNpcUpgrades(npc) {
+    if (!npc || npc.faction === 'Player') return;
+
+    const sector = game.map[`${npc.x_pos},${npc.y_pos}`];
+    if (!sector || sector.type !== 'spacePort') return;
+
+    // Determine upgrade priorities based on faction
+    let priorities = [];
+    if (npc.faction === FACTION_DURAN) {
+        // Duran: Military focus - prioritize hull, shields, fighters, missiles
+        priorities = ['hull', 'shields', 'fighters', 'missiles', 'mines'];
+    } else if (npc.faction === FACTION_VINARI) {
+        // Vinari: Tech focus - prioritize scanners, cloak, shields
+        priorities = ['cloakEnergy', 'shields', 'hull', 'fighters'];
+    } else if (npc.faction === FACTION_TRADER) {
+        // Trader: Commerce focus - prioritize cargo, fuel, shields
+        priorities = ['cargoSpace', 'fuel', 'shields', 'hull'];
+    }
+
+    // Check each priority for potential upgrades
+    for (const equipType of priorities) {
+        if (tryNpcUpgrade(npc, equipType)) {
+            // Only upgrade one item per visit to avoid over-spending
+            break;
+        }
+    }
+}
+
+/**
+ * Attempts to upgrade a specific equipment type for an NPC
+ * @param {object} npc - The NPC ship object
+ * @param {string} equipType - The equipment type to upgrade
+ * @returns {boolean} - True if upgrade was successful
+ */
+function tryNpcUpgrade(npc, equipType) {
+    const equipInfo = equipmentCosts[equipType];
+    if (!equipInfo) return false;
+
+    const currentAmount = npc[equipType] || 0;
+    const maxAmount = npc[equipInfo.max] || Infinity;
+
+    // Check if upgrade is possible
+    if (currentAmount >= maxAmount || npc.credits < equipInfo.cost) {
+        return false;
+    }
+
+    // Perform upgrade
+    npc.credits -= equipInfo.cost;
+    if (equipType === 'fuel') {
+        // Fuel is special - refill to max
+        npc.fuel = Math.min(npc.maxFuel, npc.fuel + equipInfo.amount);
+    } else {
+        npc[equipType] += equipInfo.amount;
+        // Ensure we don't exceed max
+        npc[equipType] = Math.min(npc[equipType], maxAmount);
+    }
+
+    // Optional: Log upgrade for debugging
+    console.log(`${npc.ship_name} (${npc.faction}) upgraded ${equipType} for ${equipInfo.cost}cr`);
+
+    return true;
 }
