@@ -1,8 +1,16 @@
 // Shared utility functions for randomization and cloning
+// ES6 Module exports
 
-function getRandomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
-function getRandomElement(arr) { if (!arr || arr.length === 0) return null; return arr[Math.floor(Math.random() * arr.length)]; }
-function getRandomImage(imageArray) {
+export function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function getRandomElement(arr) {
+    if (!arr || arr.length === 0) return null;
+    return arr[Math.floor(Math.random() * arr.length)];
+}
+
+export function getRandomImage(imageArray) {
     if (!imageArray || imageArray.length === 0) return '';
     const idx = Math.floor(Math.random() * imageArray.length);
     return imageArray[idx];
@@ -11,7 +19,7 @@ function getRandomImage(imageArray) {
 // Deep clone function (ensure this is present in your script.js)
 // This version aims to handle potential circular references and avoids cloning functions directly,
 // which is suitable if methods are on the prototype.
-function deepClone(obj, seen = new WeakMap()) {
+export function deepClone(obj, seen = new WeakMap()) {
     if (obj === null || typeof obj !== 'object') {
         return obj;
     }

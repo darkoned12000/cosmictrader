@@ -1,6 +1,7 @@
 // --- AUDIO CONTROLS ---
+// ES6 Module exports
 
-function initAudioControls() {
+export function initAudioControls() {
     ui.musicThemeSelect.innerHTML = '';
     musicThemes.forEach((t) => {
         const o = document.createElement('option');
@@ -82,7 +83,7 @@ function initAudioControls() {
     ui.sfxVolumeSlider.disabled = ui.muteCheckbox.checked;
 }
 
-function playSoundEffect(effectName) {
+export function playSoundEffect(effectName) {
     if (!game.audioInitialized || !soundEffects[effectName] || game.sfxVolume === 0) return; // Check game.sfxVolume for mute
     try {
         const sfxClone = ui.sfxAudio.cloneNode(); // Play multiple sounds concurrently

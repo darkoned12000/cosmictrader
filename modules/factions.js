@@ -1,5 +1,6 @@
 // A function to set up the initial state of all factions
-function initializeFactionData() {
+// ES6 Module export
+export function initializeFactionData() {
     return {
         [FACTION_DURAN]: {
             credits: 100000,

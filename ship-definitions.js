@@ -1,5 +1,6 @@
 // --- Ship Class Definition ---
-class Ship {
+// ES6 Module export
+export class Ship {
     constructor(
         ship_id,
         ship_name,
@@ -84,9 +85,9 @@ class Ship {
 }
 
 // --- Constants for Factions and Classes ---
-const FACTION_TRADER = "Trader";
-const FACTION_DURAN = "Duran";
-const FACTION_VINARI = "Vinari";
+export const FACTION_TRADER = "Trader";
+export const FACTION_DURAN = "Duran";
+export const FACTION_VINARI = "Vinari";
 // Add other factions as needed
 
 const SHIP_CLASS_INTERCEPTOR = "Interceptor";
@@ -167,7 +168,7 @@ function generateNpcIdentity(faction, ship_class) {
 }
 
 // --- Main NPC Ship Generation Function ---
-function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_pos_param = 0) {
+export function createNpcShip(faction, specific_ship_class = null, x_pos_param = 0, y_pos_param = 0) {
     if (!NPC_ARCHETYPES[faction]) {
         console.warn(`Warning: Faction '${faction}' not found in NPC_ARCHETYPES. Cannot create ship.`);
         return null;

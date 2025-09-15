@@ -248,7 +248,7 @@ function applyVirusEffects() {
 }
 
 // Solar Array
-function toggleSolarArray() {
+export function toggleSolarArray() {
     // Ensure UI is initialized
     if (!ui.deploySolarArrayButton) {
         initializeUI();

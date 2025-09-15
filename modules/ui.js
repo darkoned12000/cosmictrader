@@ -1,6 +1,8 @@
 
 // --- CONSOLE MESSAGES ---
-function displayConsoleMessage(message, type = 'neutral', sound = 'message_system') {
+// ES6 Module exports
+
+export function displayConsoleMessage(message, type = 'neutral', sound = 'message_system') {
     if (arguments.length === 2 && soundEffects[type] && !soundEffects[sound]) {
         sound = type; type = 'neutral';
     }
@@ -909,7 +911,7 @@ function hideActionView() {
 
 
 // --- UI Update Master Function ---
-function updateUI() {
+export function updateUI() {
     // Ensure UI is initialized
     if (!ui.shipInfo) {
         initializeUI();

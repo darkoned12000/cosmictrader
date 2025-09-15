@@ -1,6 +1,7 @@
 
 // This function resets the lottery state for a new game
-function resetLotteryState() {
+// ES6 Module export
+export function resetLotteryState() {
     game.lottery.isActive = false;
     game.lottery.stage = 'pick';
     game.lottery.userNumbers = [];

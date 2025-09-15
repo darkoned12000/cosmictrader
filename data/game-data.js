@@ -403,18 +403,18 @@ const equipmentCosts = {
 };
 
 // -- Commodities and stuff to sell at SpacePorts --
-const commodities = ['ore', 'food', 'tech'];
+export const commodities = ['ore', 'food', 'tech'];
 const exoticPrices = { minerals: 250, organics: 500, artifacts: 5000 };
 
 // -- Planets, Stars and Hazards --
 // All star, planet, hazard names and info is randomly generated from the terms below
-const planetNames = ["Xandor", "Elara", "Sygnara", "Voryn", "Celestara", "Rynara", "Thalys", "Orwyn", "Glavara", "Zephyron", "Tyria", "Axion", "Nebulon", "Valthor", "Saronis", "Elyx", "Corvus", "Zantara", "Oberyn", "Krythos", "Selara", "Phaeton", "Ecliptor", "Astralis", "Vionis", "Nexilon", "Caelum", "Sypher", "Galeth", "Xeridia", "Lumora", "Tychon", "Velara", "Myriad", "Arctura", "Novex", "Zephyris", "Calyx", "Orithyia", "Sylvara", "Aetherion", "Draconis", "Quasys", "Solara", "Erebos", "Thalara", "Kryon", "Vylis", "Nexara", "Zorath", "Ilythar", "Vexalon", "Synthera", "Auralis", "Zypheron", "Tarsys", "Elion", "Gravara", "Nyxara", "Corynth", "Xylara", "Praxon", "Vionara", "Zelthar", "Astron", "Kytheris", "Sylion", "Eryndor", "Valthys", "Orythia", "Nebula", "Xerath", "Tylara", "Cygnara", "Aethys", "Zorwyn", "Vexara", "Sylthara", "Klyon", "Ecthara", "Rynther", "Galara", "Zyron", "Velithor", "Naxara", "Thalith", "Orionis", "Clythera", "Voryth", "Aelara", "Xynara", "Krylara", "Zentara", "Elythar", "Sovara", "Nyxion", "Tethys", "Vionth", "Astrara"];
-const planetTypes = ["Terran", "Jungle", "Desert", "Ocean", "Ice", "Lava", "Gas Giant", "Barren", "Toxic"];
-const planetAtmospheres = ["N2-O2", "CO2", "Methane", "Ammonia", "Acid", "Thin", "None", "Dense"];
-const planetOwnership = ["Unclaimed", "Federation", FACTION_DURAN, FACTION_VINARI, "Pirate", "Colony", FACTION_TRADER];
-const starNames = ["Zorathis", "Aelion", "Sypheris", "Vorynth", "Celara", "Rynex", "Thalarae", "Orwynis", "Glavion", "Zephyra", "Tyronis", "Axionis", "Nebulys", "Valthara", "Sarion", "Elyxar", "Corvys", "Zantaris", "Oberys", "Krythar", "Selaris", "Phaetara", "Eclipson", "Astralon", "Vionara", "Nexilys", "Caelion", "Sypheron", "Galethar", "Xeridion", "Lumarys", "Tychara", "Velion", "Myrion", "Arcturis", "Novara", "Zephyrion", "Calyxar", "Orithys", "Sylvaris", "Aetherys", "Draconara", "Quasara", "Solarion", "Erebion", "Thalysar", "Kryonis", "Vylion", "Nexarion", "Zorathar"];
-const starTypes = ["O-Type", "B-Type", "A-Type", "F-Type", "G-Type", "K-Type", "M-Type", "White Dwarf", "Red Giant", "Brown Dwarf"];
-const hazardTypes = ["Black Hole", "Asteroid Field", "Mine", "Solar Storm", "Nebula", "Interstellar Dust Cloud", "Plasma Field", "Ion Cloud", "Micrometeorite Shower", "Magnetic Storm", "Dark Matter Cloud"];
+export const planetNames = ["Xandor", "Elara", "Sygnara", "Voryn", "Celestara", "Rynara", "Thalys", "Orwyn", "Glavara", "Zephyron", "Tyria", "Axion", "Nebulon", "Valthor", "Saronis", "Elyx", "Corvus", "Zantara", "Oberyn", "Krythos", "Selara", "Phaeton", "Ecliptor", "Astralis", "Vionis", "Nexilon", "Caelum", "Sypher", "Galeth", "Xeridia", "Lumora", "Tychon", "Velara", "Myriad", "Arctura", "Novex", "Zephyris", "Calyx", "Orithyia", "Sylvara", "Aetherion", "Draconis", "Quasys", "Solara", "Erebos", "Thalara", "Kryon", "Vylis", "Nexara", "Zorath", "Ilythar", "Vexalon", "Synthera", "Auralis", "Zypheron", "Tarsys", "Elion", "Gravara", "Nyxara", "Corynth", "Xylara", "Praxon", "Vionara", "Zelthar", "Astron", "Kytheris", "Sylion", "Eryndor", "Valthys", "Orythia", "Nebula", "Xerath", "Tylara", "Cygnara", "Aethys", "Zorwyn", "Vexara", "Sylthara", "Klyon", "Ecthara", "Rynther", "Galara", "Zyron", "Velithor", "Naxara", "Thalith", "Orionis", "Clythera", "Voryth", "Aelara", "Xynara", "Krylara", "Zentara", "Elythar", "Sovara", "Nyxion", "Tethys", "Vionth", "Astrara"];
+export const planetTypes = ["Terran", "Jungle", "Desert", "Ocean", "Ice", "Lava", "Gas Giant", "Barren", "Toxic"];
+export const planetAtmospheres = ["N2-O2", "CO2", "Methane", "Ammonia", "Acid", "Thin", "None", "Dense"];
+export const planetOwnership = ["Unclaimed", "Federation", FACTION_DURAN, FACTION_VINARI, "Pirate", "Colony", FACTION_TRADER];
+export const starNames = ["Zorathis", "Aelion", "Sypheris", "Vorynth", "Celara", "Rynex", "Thalarae", "Orwynis", "Glavion", "Zephyra", "Tyronis", "Axionis", "Nebulys", "Valthara", "Sarion", "Elyxar", "Corvys", "Zantaris", "Oberys", "Krythar", "Selaris", "Phaetara", "Eclipson", "Astralon", "Vionara", "Nexilys", "Caelion", "Sypheron", "Galethar", "Xeridion", "Lumarys", "Tychara", "Velion", "Myrion", "Arcturis", "Novara", "Zephyrion", "Calyxar", "Orithys", "Sylvaris", "Aetherys", "Draconara", "Quasara", "Solarion", "Erebion", "Thalysar", "Kryonis", "Vylion", "Nexarion", "Zorathar"];
+export const starTypes = ["O-Type", "B-Type", "A-Type", "F-Type", "G-Type", "K-Type", "M-Type", "White Dwarf", "Red Giant", "Brown Dwarf"];
+export const hazardTypes = ["Black Hole", "Asteroid Field", "Mine", "Solar Storm", "Nebula", "Interstellar Dust Cloud", "Plasma Field", "Ion Cloud", "Micrometeorite Shower", "Magnetic Storm", "Dark Matter Cloud"];
 const planetImagesByType = { // These are stored in: ./Images/planets/
     "Terran": ["Images/planets/Terran_World_1.gif", "Images/planets/Terran_World_2.gif"],
     "Jungle": ["Images/planets/Jungle_World_1.gif"],
@@ -449,7 +449,7 @@ const hazardImagesByType = { // These are stored in: ./Images/hazards/
 // S = SELL, B = BUY
 // There is three commodities these ports sell (ore, food, tech)
 // So a 'SBB' = SELL Ore, BUY food, BUY tech
-const portTypes = [
+export const portTypes = [
     'SBB',
     'SBS',
     'SSB',
@@ -461,7 +461,7 @@ const portTypes = [
 ];
 // GFX for Interaction section when at a port
 // These are stored in: ./Images/ports/ and are randomly picked when visiting a Port
-const portImages = [
+export const portImages = [
     'Images/ports/Port_1.png',
     'Images/ports/Port_2.png',
     'Images/ports/Port_3.png',
@@ -470,7 +470,7 @@ const portImages = [
 ];
 // GFX for Interaction section when at a port
 // These are stored in: ./Images/stations/ and are randomly picked when visiting a Space Port
-const spacePortImages = [
+export const spacePortImages = [
     'Images/stations/Station_1.png',
     'Images/stations/Station_2.png',
     'Images/stations/Station_3.png'

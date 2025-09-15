@@ -7,7 +7,7 @@
  */
 
 // Determines the map display symbol for an NPC ship
-function determineNpcMapType(faction) {
+export function determineNpcMapType(faction) {
     if (faction === FACTION_VINARI) {
         return 'vinari_ship';
 

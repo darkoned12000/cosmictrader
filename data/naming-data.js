@@ -86,7 +86,7 @@ const FACTION_DEATH_CRIES = {
 };
 
 // --- Port and Space Port Naming Data ---
-const PORT_PREFIXES = [
+export const PORT_PREFIXES = [
 "Bloodforge", "Ironscale", "Grimclaw", "Warspike", "Ashen", // Duran-inspired
 "Starwoven", "Aetherial", "Glimmer", "Celestine", "Nebulous", // Vinari-inspired
 "Profit", "Sly", "Grubby", "Coin", "Hustle", // Trader-inspired
@@ -99,7 +99,7 @@ const PORT_PREFIXES = [
 "Lucky", "Shady", "Nifty", "Gilded", "Rust"
 ];
 
-const PORT_SUFFIXES = [
+export const PORT_SUFFIXES = [
 "Crag", "Maw", "Talon", "Anvil", "Pyre", // Duran-inspired
 "Shimmer", "Wisp", "Gleam", "Flux", "Sylph", // Vinari-inspired
 "Deal", "Haggle", "Stash", "Cartel", "Score", // Trader-inspired
@@ -112,7 +112,7 @@ const PORT_SUFFIXES = [
 "Chasm", "Beacon", "Pinnacle", "Drift", "Cluster"
 ];
 
-const SPACE_PORT_NAMES = [
+export const SPACE_PORT_NAMES = [
 "Krythos Ironmaw", // Duran stronghold
 "Bloodforge Citadel", // Duran fortress
 "Skullrend Bastion", // Duran warbase

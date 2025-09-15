@@ -1,6 +1,6 @@
 // Central handler for all player-triggered actions
 
-function triggerAction(action, ...args) {
+export function triggerAction(action, ...args) {
     attemptFirstAudioPlay();
     // playSoundEffect('ui_click'); // Already played by delegated listener for most buttons
 

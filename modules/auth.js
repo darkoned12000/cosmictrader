@@ -1,11 +1,11 @@
 // --- modules/auth.js ---
 
-const ACCOUNTS_STORAGE_KEY = 'cosmicTraderAccounts';
+export const ACCOUNTS_STORAGE_KEY = 'cosmicTraderAccounts';
 
 /**
  * Displays the login modal over the blurred game UI.
  */
-function showLoginModal() {
+export function showLoginModal() {
     document.getElementById('main-ui').classList.add('blurred');
     document.getElementById('login-screen').style.display = 'flex';
     document.getElementById('player-name-input').focus();
@@ -14,7 +14,7 @@ function showLoginModal() {
 /**
  * Hides the login modal and un-blurs the game UI.
  */
-function hideLoginModal() {
+export function hideLoginModal() {
     document.getElementById('main-ui').classList.remove('blurred');
     document.getElementById('login-screen').style.display = 'none';
 }
@@ -112,7 +112,7 @@ function handleCreatePlayer() {
 /**
  * Finalizes the login/creation process.
  */
-function startGame() {
+export function startGame() {
     hideLoginModal();
     updateUI();
 }

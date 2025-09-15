@@ -1,4 +1,9 @@
 // DOM and keyboard event listeners
+// ES6 Module imports
+
+import { showLoginModal } from '../modules/auth.js';
+import { initializeUI } from './state.js';
+import { triggerAction } from './actions.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize UI references first
