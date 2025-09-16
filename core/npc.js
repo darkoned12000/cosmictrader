@@ -93,7 +93,7 @@ export function moveNPCs() {
 
             // Continue with normal movement if not destroyed by hazard
             // Only move if target sector is empty or another NPC (allowing multiple NPCs/objects in one sector)
-            if (!targetSectorContent || ['empty', 'star', 'npc_trader', 'vinari_ship', 'duran_ship'].includes(targetSectorContent.type)) {
+            if (!targetSectorContent || ['empty', 'star', 'npc_trader', 'vinari_ship', 'duran_ship', 'port', 'spacePort'].includes(targetSectorContent.type)) {
                 if (game.map[oldKey] && game.map[oldKey].data === npc) {
                     game.map[oldKey] = null; // Clear old position
                 }
@@ -153,6 +153,8 @@ export function handleNpcUpgrades(npc) {
 
     const sector = game.map[`${npc.x_pos},${npc.y_pos}`];
     if (!sector || sector.type !== 'spacePort') return;
+
+
 
     // Determine upgrade priorities based on faction
     let priorities = [];
@@ -262,5 +264,7 @@ function tryNpcUpgrade(npc, equipType) {
         return true;
     }
 
+    // Debug: Log why upgrade failed
+    console.log(`${npc.ship_name} cannot upgrade ${equipType}: cost=${cost}, credits=${npc.credits}, canUpgrade=${canUpgrade}`);
     return false;
 }
