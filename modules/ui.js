@@ -862,6 +862,22 @@ export function displayGalaxyLog() {
     document.getElementById('close-manual-button').addEventListener('click', hideManual);
 }
 
+// Make filterGalaxyLog globally available
+window.filterGalaxyLog = function() {
+    const searchTerm = document.getElementById('galaxy-log-search').value.toLowerCase();
+    const logContainer = document.getElementById('galaxy-log-container');
+    const filteredLog = game.galaxyLog.filter(entry => entry.text.toLowerCase().includes(searchTerm));
+    let logHTML = '';
+    if (filteredLog.length === 0) {
+        logHTML += '<p>No matching events found.</p>';
+    } else {
+        filteredLog.forEach(entry => {
+            logHTML += `<div class="console-message console-message-${entry.type}"><strong>[${entry.timestamp}]</strong> ${entry.text}</div>`;
+        });
+    }
+    logContainer.innerHTML = logHTML;
+};
+
 export function filterGalaxyLog() {
     const searchTerm = document.getElementById('galaxy-log-search').value.toLowerCase();
     const logContainer = document.getElementById('galaxy-log-container');

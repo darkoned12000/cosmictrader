@@ -7,6 +7,7 @@ import { playSoundEffect } from '../modules/audio.js';
 import { handleNpcHazardImpact } from '../modules/mechanics.js';
 import { FACTION_TRADER, FACTION_VINARI, FACTION_DURAN } from '../data/naming-data.js';
 import { equipmentCosts, scannerModels } from '../data/game-data.js';
+import { logGalaxyEvent } from '../modules/factions.js';
 import { getRandomInt, getRandomElement } from './utilities.js';
 
 /**
@@ -257,7 +258,7 @@ function tryNpcUpgrade(npc, equipType) {
     }
 
     if (canUpgrade) {
-        displayConsoleMessage(`${npc.ship_name} (${npc.faction}) upgraded ${upgradeDesc} for ${cost}cr`, 'info');
+        logGalaxyEvent(`${npc.ship_name} (${npc.faction}) upgraded ${upgradeDesc} for ${cost}cr`, 'info');
         return true;
     }
 
