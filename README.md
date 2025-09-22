@@ -6,6 +6,8 @@ I will be trying to include a lot of the game features from both and combine the
 web based game. Right now its in early stages and I would like to get a single-player aspect completed
 before attempting to add any multiplayer aspect.
 
+![Cosmic Trader Screenshot](Images/CT_Pic1.png)
+
 Current Game Features:
 - **Port Trading**: Buy/sell commodities (ore, food, tech) and exotics (minerals, organics, artifacts) with dynamic prices
 - **Sector Navigation**: 50x100 galaxy grid with fuel-based movement
