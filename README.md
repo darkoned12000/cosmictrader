@@ -1,10 +1,10 @@
 # Cosmic Trader
 
-This is a web-based game based on the Yankee Trader and TradeWars 2002 BBS Doors games.
+This is a web-based game based loosely on the Yankee Trader and TradeWars 2002 BBS Doors games.
 
 I will be trying to include a lot of the game features from both and combine them into a basic 
 web based game. Right now its in early stages and I would like to get a single-player aspect completed
-before adding any multiplayer aspect.
+before attempting to add any multiplayer aspect.
 
 Current Game Features:
 - **Port Trading**: Buy/sell commodities (ore, food, tech) and exotics (minerals, organics, artifacts) with dynamic prices
@@ -19,7 +19,7 @@ Current Game Features:
 - **Port Ownership**: Capture ports for trading advantages and defense
 - **Lottery**: Random credit rewards
 - **Rankings**: Power-based leaderboards
-- **Accessibility**: Text-to-speech support
+- **Accessibility**: Text-to-speech support (needs to be re-worked - disabled)
 
 Advanced Mechanics:
 - **NPC Trading**: Strategic buy-low-sell-high with full inventory management
@@ -29,11 +29,20 @@ Advanced Mechanics:
 - **Faction AI**: Upgrade priorities (Duran: combat, Vinari: tech, Traders: cargo)
 
 Things I would like in the game but not sure if I can make it happen:
-- Port-to-Port trading mechanism (like a script)
-- Robbing players/npc
-- Aliens/NPCs that will actively move on the map and perform actions while you play
-- Will need a database for advanced mechanics
-- After getting base game mechanics down and testing, figure out how to insert multiplayer
+- Port-to-Port trading mechanism (ie: port pair trading)
+- Penality system when  fail at stealing/hacking (ie: fines, viruses injected against ship)
+- Robbing players/npc (currently only ports can have this done)
+- Aliens/NPCs that will actively move on the map and perform actions while you play, having the NPCs actively trying to get better is very important to me
+- Need a database implementation, right now all game mechanics for testing is help in browser local storage
+- Chat mechanics or mail system, like in old tradewars
+- Implement a planet system for capturing, building up production, leveling planet for defensive/offensive benefits
+- Try to introduce new weapons/defensive mechanics
+- Simple questing system
+- Galaxy event system
+- Reporting system (ie: players/npc, factions, ports, planets, net worth)
+- Clan/Faction system
+- Possibly explore better 'visual map system'
 
 Things that will not be in the game:
-- Scripting actions
+- Scripting actions (like in old TW)
+- Game will not have much in the way of graphics, but I would be open to suggestion and thoughts after the majority of features are in
