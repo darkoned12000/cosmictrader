@@ -44,6 +44,7 @@ Things I would like in the game but not sure if I can make it happen:
 - Reporting system (ie: players/npc, factions, ports, planets, net worth)
 - Clan/Faction system
 - Possibly explore better 'visual map system'
+- Possibly a new UI ;)
 
 Things that will not be in the game:
 - Scripting actions (like in old TW)
