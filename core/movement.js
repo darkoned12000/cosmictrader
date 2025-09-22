@@ -48,6 +48,7 @@ export function move(direction) {
         game.player.y = nY;
         game.hasMoved = true;
         game.moveCount++;
+        game.player.hasMovedThisTurn = true;
 
         // Check for lottery play reset
         checkLotteryPeriodReset();
@@ -145,6 +146,7 @@ export function warpToSector() {
         game.player.y = tY;
         game.hasMoved = true; // Warping counts as having moved
         game.moveCount += distance; // Each sector warped over increases move count
+        game.player.hasMovedThisTurn = true;
 
         displayConsoleMessage(`Warp successful! Arrived at ${tX}, ${tY}. Fuel remaining: ${game.player.ship.fuel}.`);
 
@@ -211,10 +213,19 @@ export function runSimulationTick() {
     // 1. Advance the game's internal clock
     game.moveCount++;
     game.hasMoved = true;
+    game.player.hasMovedThisTurn = false; // Reset for new turn
 
     // 2. Run all periodic game events
     checkLotteryPeriodReset();
-    applyVirusEffects();
+
+    // Only apply virus effects if player has moved this turn
+    // During simulation, player hasn't moved, so skip virus effects
+    if (game.player.hasMovedThisTurn) {
+        applyVirusEffects();
+    }
+
+    // 3. Move NPCs and update galaxy
+    moveNPCs();
 
     if (game.moveCount % GAME_LOOP_INTERVALS.incomeAndBuilding === 0) {
         processFactionIncomeAndBuilding();

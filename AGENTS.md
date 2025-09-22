@@ -9,34 +9,24 @@
 - **Combat Mechanics**: Engage in ship-to-ship battles using fighters, missiles, mines, and shields
 - **Exploration**: Discover planets, scan sectors for hazards and opportunities, deploy solar arrays for energy
 - **Faction Dynamics**: Navigate relationships with three major factions (Traders, Duran, Vinari) and their territories
-- **NPC Interactions**: Encounter and battle AI-controlled ships with different archetypes and behaviors
+- **NPC Interactions**: Encounter and battle AI-controlled ships with different archetypes, automated trading behaviors, equipment upgrades, fuel management, and faction-specific strategic decision-making
 - **Economic Events**: Experience dynamic market changes through booms, busts, strikes, and shortages
 - **Port Ownership**: Capture and manage ports for trading advantages and strategic positioning
+- **Banking System**: Deposit/withdraw credits with 1.5% daily interest, PIN security, and persistent account storage
+- **NPC Economy**: NPCs actively trade commodities and exotic resources, upgrade equipment, manage fuel, and accumulate wealth through automated decision-making
 
 ### Technical Architecture:
 - Built with vanilla JavaScript using ES6 modules
 - Real-time performance monitoring and optimization tools
-- Comprehensive testing suite with Jest and browser-based test runner
+- Modular architecture separating core logic, UI, data, and feature modules
 - Modular architecture separating core logic, UI, data, and feature modules
 - Local storage persistence for game saves and player accounts
 
-## Build/Test Commands
-- **Run all tests**: `npm test`
-- **Run tests in watch mode**: `npm run test:watch`
-- **Run tests with coverage**: `npm run test:coverage`
-- **Run single test file**: `npm test -- tests/filename.test.js`
+## Build Commands
 - **Serve development server**: `npm run serve` (Python HTTP server on port 9999)
 - **Build for production**: `npm run build` (Webpack bundling to dist/)
 
-## Testing Infrastructure
-
-### Browser-Based Test Runner
-- **test-runner.html**: Interactive browser-based test runner
-- **How to run**: Open `test-runner.html` in a web browser (requires local server)
-- **Features**: Run individual test suites or all tests, view results in real-time
-- **Usage**: Start with `npm run serve` then navigate to `test-runner.html`
-
-### Performance Monitoring
+## Performance Monitoring
 - **modules/performance-monitor.js**: Real-time performance tracking
 - **How to enable**: Uncomment `perfMonitor.init()` in `core/main.js`
 - **Features**: FPS monitoring, memory usage, load time tracking
@@ -75,12 +65,6 @@
 - Keep functions focused on single responsibilities
 - Prefer functional programming patterns where appropriate
 
-### Testing
-- Tests located in `tests/` directory with `.test.js` extension
-- Use Jest framework with ES6 module support
-- Test both success and error paths
-- Mock external dependencies when needed
-
 ### Performance
 - Use efficient algorithms for game calculations
 - Cache expensive operations when possible
@@ -102,7 +86,7 @@
 
 **actions.js** - Contains player action handlers for game mechanics. Processes commands like scanning sectors, deploying equipment (mines, fighters), interacting with ports, and other player-initiated actions that affect the game world.
 
-**npc.js** - Manages NPC (Non-Player Character) ship generation, AI behavior, and movement patterns. Creates NPC ships with different archetypes, handles their autonomous movement around the galaxy, and determines their behavioral patterns.
+**npc.js** - Manages NPC (Non-Player Character) ship generation, AI behavior, and movement patterns. Creates NPC ships with different archetypes, handles their autonomous movement around the galaxy, profitable trading (buy-low-sell-high with +3-4M credits net), equipment upgrades (40-60% success rates), fuel management, and faction-specific strategic decision-making. NPCs prioritize selling all available inventory for space, then buying cheap commodities to arbitrage at better ports.
 
 **events.js** - Sets up DOM event listeners and keyboard event handling. Manages all user interface interactions, button clicks, keyboard shortcuts, and event delegation. Initializes the UI and performance monitoring on page load.
 
@@ -114,7 +98,7 @@
 
 **auth.js** - Player authentication and account management. Handles login/logout functionality, player account creation, session management, and the authentication modal system for managing multiple player accounts.
 
-**commerce.js** - Trading system and port interactions. Manages buy/sell transactions for commodities, handles port ownership mechanics, calculates trade profits/losses, and processes player-owned port benefits (discounted buying, premium selling).
+**commerce.js** - Trading system and port interactions. Manages buy/sell transactions for commodities (ore/food/tech) and exotic resources (minerals/organics/artifacts), handles port ownership mechanics, calculates trade profits/losses, processes player-owned port benefits, and supports NPC automated trading. Features dynamic port prices with boom/bust events and price clamps ensuring profitable trading (sell prices ≤ buy prices).
 
 **combat.js** - Combat mechanics and ship-to-ship battles. Handles combat initiation, damage calculations, shield/hull interactions, weapon systems (fighters, missiles, mines), and combat UI state management.
 
@@ -122,11 +106,13 @@
 
 **factions.js** - Faction relationships and diplomatic systems. Manages the three main factions (Traders, Duran, Vinari), their territories, ships, relationships, and generates faction-related events and conflicts.
 
+**galactic-bank.js** - Banking system for players and NPCs. Handles deposits, withdrawals, interest calculations (1.5% daily), PIN security, and persistent account storage. NPCs use banking for wealth management and long-term credit accumulation.
+
 **lottery.js** - Lottery system for random rewards. Implements a number-drawing lottery game where players can win credits. Manages lottery state, number selection, drawing mechanics, and periodic play resets.
 
 **mechanics.js** - Core game mechanics implementation. Handles hazard encounters (mines, asteroids), damage calculations from environmental hazards, sector scanning results, and various game world interactions.
 
-**planets.js** - Planet generation and colonization features. Creates procedural planets with different types, atmospheres, temperatures, and life signs. Generates descriptive text for planet exploration and colonization mechanics.
+**planets.js** - Planet generation and colonization features. Creates procedural planets with different types, atmospheres, temperatures, and life signs. Generates descriptive text for planet exploration, colonization mechanics, and NPC mining operations with resource extraction.
 
 **power-calculator.js** - Ship power scoring system. Calculates comprehensive power ratings for ships based on hull, shields, weapons, equipment, credits, and combat history. Used for rankings and AI decision-making.
 
@@ -193,6 +179,14 @@
 - Core game logic separated into `core/` directory
 - Data constants centralized in `data/` directory
 - Clear separation of concerns
+
+### NPC Intelligence System
+- **Trading AI**: NPCs make autonomous trading decisions based on faction preferences and market conditions
+- **Upgrade Logic**: Equipment purchases and ship improvements driven by faction-specific priorities
+- **Resource Management**: Fuel consumption, cargo capacity optimization, and wealth accumulation
+- **Strategic Movement**: Pattern-based navigation with hazard avoidance and opportunity seeking
+- **Economic Participation**: Active market influence through buying/selling commodities and exotic resources
+- **Banking Integration**: NPCs utilize banking for long-term wealth management and interest accumulation
 
 ### ES6 Module Migration
 - Project is migrating from legacy script loading to ES6 modules

@@ -4,7 +4,7 @@
 
 import { game, ui } from '../core/state.js';
 import { playSoundEffect, attemptFirstAudioPlay } from './audio.js';
-import { equipmentCosts, exoticPrices, scannerModels, shipClasses, planetImagesByType, hazardImagesByType, starImagesByType, commodities } from '../data/game-data.js';
+import { equipmentCosts, exoticPrices, scannerModels, shipClasses, planetImagesByType, hazardImagesByType, starImagesByType, commodities, PLANET_SCAN_COST, PLANET_MINE_COST } from '../data/game-data.js';
 import { FACTION_TRADER, FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
 import { NPC_ARCHETYPES } from '../ship-definitions.js';
 import { calculateTradeIn } from './commerce.js';
@@ -130,9 +130,13 @@ export function updateInformationFeed() {
                 }
                 htmlOutput += formatLine("Owner", ownerDisplay);
                 htmlOutput += formatLine("Type", `Port(${entityData.portType})`);
-                htmlOutput += formatLine("Ore $", entityData.prices.ore);
-                htmlOutput += formatLine("Food $", entityData.prices.food);
-                htmlOutput += formatLine("Tech $", entityData.prices.tech);
+                // Display prices with buy/sell distinction
+                const orePrice = entityData.sell_prices ? `${entityData.sell_prices.ore}/${entityData.buy_prices.ore}` : entityData.prices.ore;
+                const foodPrice = entityData.sell_prices ? `${entityData.sell_prices.food}/${entityData.buy_prices.food}` : entityData.prices.food;
+                const techPrice = entityData.sell_prices ? `${entityData.sell_prices.tech}/${entityData.buy_prices.tech}` : entityData.prices.tech;
+                htmlOutput += formatLine("Ore $", orePrice);
+                htmlOutput += formatLine("Food $", foodPrice);
+                htmlOutput += formatLine("Tech $", techPrice);
                 htmlOutput += formatLine("Fuel $", `${equipmentCosts.fuel.unitCost}/u`);
                 if (game.player.ship.computerLevel >= entityData.securityLevel) {
                     htmlOutput += formatLine("Port Credits", entityData.credits);
@@ -399,7 +403,7 @@ export function updateInteraction() {
                         <div style="display: flex; justify-content: space-between; gap: 15px; margin-bottom: 8px;">
                             <div style="flex: 1; border: 1px solid #030; padding: 6px; background: #1a1a1a;">
                                 <p style="margin-top:0; margin-bottom: 1px; font-weight: bold;">Trade Commodities:</p>
-                                <p style="font-size:10px; margin-top:0; margin-bottom: 5px;">(Prices: Ore ${entityData.prices.ore}, Food ${entityData.prices.food}, Tech ${entityData.prices.tech})</p>
+                                <p style="font-size:10px; margin-top:0; margin-bottom: 5px;">(Prices: Ore ${entityData.sell_prices ? entityData.sell_prices.ore + '/' + entityData.buy_prices.ore : entityData.prices.ore}, Food ${entityData.sell_prices ? entityData.sell_prices.food + '/' + entityData.buy_prices.food : entityData.prices.food}, Tech ${entityData.sell_prices ? entityData.sell_prices.tech + '/' + entityData.buy_prices.tech : entityData.prices.tech})</p>
                                 <div class="button-group">
                                     <button onclick="triggerAction('tradeByInput','buy','ore')" ${entityData.stock.ore<=0||entityData.behavior.ore==='B'?'disabled':''}>Buy Ore</button>
                                     <button onclick="triggerAction('tradeByInput','buy','food')" ${entityData.stock.food<=0||entityData.behavior.food==='B'?'disabled':''}>Buy Food</button>
@@ -425,12 +429,7 @@ export function updateInteraction() {
                                     <button onclick="triggerAction('tradeAll','sell','tech')" ${entityData.behavior.tech==='S'?'disabled':''}>Sell All Tech</button>
                                 </div>
                             </div>
-                        </div>
-                        <hr style="border-color: #030; margin: 5px 0 5px 0;">
-                        <div><p style="margin-top:0; margin-bottom: 5px;">Refuel:</p>
-                            <button onclick="triggerAction('buyFuel')" ${game.player.credits<equipmentCosts.fuel.unitCost||game.player.ship.fuel>=game.player.ship.maxFuel?'disabled':''}>Buy Fuel(${equipmentCosts.fuel.unitCost}/u)</button>
-                            <label>Amt:</label><input type="number" id="buy-fuel-amount" min="1" value="100" style="width:60px;">
-                        </div>`;
+                         </div>`;
                     if (entityData.owner === game.player.name) {
                         spacePortActionsHTML += `
                             <hr style="border-color: #030; margin: 5px 0 5px 0;">
@@ -476,11 +475,11 @@ export function updateInteraction() {
                 if (!entityData.isScanned) {
                     // If not scanned, ONLY show the scan button.
                     planetActionsHTML += `<p>Planetary Operations:</p>`;
-                    planetActionsHTML += `<div><button data-action="scanPlanet">Scan Planet (5 fuel)</button></div>`;
+                    planetActionsHTML += `<div><button data-action="scanPlanet">Scan Planet (${PLANET_SCAN_COST} fuel)</button></div>`;
                 } else {
                     // If scanned, show all other relevant buttons.
                     planetActionsHTML += `<p>Planetary Operations:</p>`;
-                    planetActionsHTML += `<div><button data-action="minePlanet">Mine Planet (10 fuel)</button></div>`;
+                    planetActionsHTML += `<div><button data-action="minePlanet">Mine Planet (${PLANET_MINE_COST} fuel)</button></div>`;
 
                     // Logic for Claim/Invade
                     if (entityData.ownership === 'Unclaimed') {
@@ -721,7 +720,7 @@ export function displayManual() {
         GALAXY MAP:
         The map shows your current sector (@) and scanned objects.
         Different symbols represent different types of locations:
-        P - Port (Trade, Refuel, Upgrade Port, Activities)
+        P - Port (Trade, Upgrade Port, Activities)
         S - Space Port (Refuel, Equip Ship, Upgrade Software, Virus Removal, Warp, Buy Ship)
         O - Planet/Moon (Information, potential future interactions)
         B - Star (Information, environmental hazards)
@@ -749,7 +748,6 @@ export function displayManual() {
         PORTS:
         Buy and sell commodities based on local supply and demand.
         Prices fluctuate.
-        You can refuel here.
         Owned Ports can be upgraded (capacity, security).
         Port Activities: Attempt to Steal Resources, Hack Credits, Play Lottery,
         Inquire about Purchasing the Port, or Pay for a Tip. Be cautious!
@@ -836,6 +834,53 @@ export function hideManual() {
      updateUI();
 }
 
+
+
+export function displayDockingStats() {
+    attemptFirstAudioPlay();
+    playSoundEffect('ui_click');
+
+    ui.spacePortTitle.innerHTML = 'NPC Docking Statistics';
+    ui.spacePortBox.style.display = 'block';
+
+    let statsHTML = '<div style="white-space: pre-wrap; overflow-y: auto; max-height: 300px;">';
+
+    if (!game.dockingStats || Object.keys(game.dockingStats).length === 0) {
+        statsHTML += '<p>No docking statistics recorded yet.</p>';
+        statsHTML += '<p>Run simulation mode to see NPC activity.</p>';
+    } else {
+        statsHTML += '<h3>NPC Spaceport Activity</h3>';
+        Object.entries(game.dockingStats).forEach(([faction, stats]) => {
+            const upgradeRate = stats.visits > 0 ? ((stats.upgrades / stats.visits) * 100).toFixed(1) : 0;
+            statsHTML += `<div style="margin-bottom: 10px; padding: 10px; background: #001100; border: 1px solid #0f0;">`;
+            statsHTML += `<strong>${faction}:</strong><br>`;
+            statsHTML += `• Spaceport visits: ${stats.visits}<br>`;
+            statsHTML += `• Successful upgrades: ${stats.upgrades}<br>`;
+            statsHTML += `• Upgrade success rate: ${upgradeRate}%<br>`;
+            statsHTML += `• Average credits spent per visit: ${stats.visits > 0 ? Math.round((stats.upgrades * 1000) / stats.visits) : 0}cr`;
+            statsHTML += `</div>`;
+        });
+
+        // Summary
+        const totalVisits = Object.values(game.dockingStats).reduce((sum, stats) => sum + stats.visits, 0);
+        const totalUpgrades = Object.values(game.dockingStats).reduce((sum, stats) => sum + stats.upgrades, 0);
+        const overallRate = totalVisits > 0 ? ((totalUpgrades / totalVisits) * 100).toFixed(1) : 0;
+
+        statsHTML += `<div style="margin-top: 20px; padding: 10px; background: #002200; border: 1px solid #0f0;">`;
+        statsHTML += `<strong>Overall Summary:</strong><br>`;
+        statsHTML += `• Total visits: ${totalVisits}<br>`;
+        statsHTML += `• Total upgrades: ${totalUpgrades}<br>`;
+        statsHTML += `• Overall success rate: ${overallRate}%`;
+        statsHTML += `</div>`;
+    }
+
+    statsHTML += '</div><div><button id="close-manual-button">Close Stats</button></div>';
+
+    ui.spacePortControls.innerHTML = statsHTML;
+
+    document.getElementById('close-manual-button').addEventListener('click', hideManual);
+}
+
 export function displayGalaxyLog() {
     attemptFirstAudioPlay();
     playSoundEffect('ui_click');
@@ -848,6 +893,29 @@ export function displayGalaxyLog() {
     ui.spacePortBox.style.display = 'block';
 
     let logHTML = '<div id="galaxy-log-container" style="white-space: pre-wrap; overflow-y: auto; max-height: 300px;">';
+
+    // Add docking statistics
+    if (game.dockingStats && Object.keys(game.dockingStats).length > 0) {
+        logHTML += '<div style="margin-bottom: 20px; padding: 10px; background: #002200; border: 1px solid #0f0;">';
+        logHTML += '<h3 style="color: #0f0; margin: 0 0 10px 0;">NPC Docking Statistics</h3>';
+        Object.entries(game.dockingStats).forEach(([faction, stats]) => {
+            const upgradeRate = stats.visits > 0 ? ((stats.upgrades / stats.visits) * 100).toFixed(1) : 0;
+            logHTML += `<div style="margin-bottom: 5px;"><strong>${faction}:</strong> ${stats.visits} visits, ${stats.upgrades} upgrades (${upgradeRate}% success rate)</div>`;
+        });
+        logHTML += '</div>';
+    }
+
+    // Add trading statistics
+    if (game.tradingStats && Object.keys(game.tradingStats).length > 0) {
+        logHTML += '<div style="margin-bottom: 20px; padding: 10px; background: #002200; border: 1px solid #0f0;">';
+        logHTML += '<h3 style="color: #0f0; margin: 0 0 10px 0;">NPC Trading Statistics</h3>';
+        Object.entries(game.tradingStats).forEach(([faction, stats]) => {
+            const netCredits = stats.totalCreditsEarned - stats.totalCreditsSpent;
+            logHTML += `<div style="margin-bottom: 5px;"><strong>${faction}:</strong> ${stats.trades} trades, ${netCredits >= 0 ? '+' : ''}${netCredits.toLocaleString()}cr net</div>`;
+        });
+        logHTML += '</div>';
+    }
+
     if (game.galaxyLog.length === 0) {
         logHTML += '<p>No significant events recorded.</p>';
     } else {
@@ -1007,4 +1075,32 @@ export function updateUI() {
         ui.deployMineButton.disabled = game.player.ship.mines <= 0;
         // The solar array and warp buttons will be handled by their own logic within updateUI
     }
+}
+
+// --- Death Modal Functions ---
+export function showDeathModal(callback) {
+    const modal = document.getElementById('death-modal');
+    const progressBar = document.getElementById('death-progress-bar');
+    const progressText = document.getElementById('progress-text');
+
+    modal.style.display = 'flex';
+    progressBar.style.width = '0%';
+    progressText.textContent = 'Re-cloning in progress... 0%';
+
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 1.2 + 0.3; // 0.5-2.5% per tick
+        if (progress > 100) progress = 100;
+
+        progressBar.style.width = `${progress}%`;
+        progressText.textContent = `Re-cloning in progress... ${Math.floor(progress)}%`;
+
+        if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                modal.style.display = 'none';
+                if (callback) callback();
+            }, 500);
+        }
+    }, 100); // Update every 100ms for ~10 seconds total
 }

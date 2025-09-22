@@ -2,11 +2,12 @@
 
 // --- Combat Module Imports ---
 import { game, ui } from '../core/state.js';
-import { displayConsoleMessage, updateUI } from './ui.js';
+import { displayConsoleMessage, updateUI, showDeathModal } from './ui.js';
 import { playSoundEffect } from './audio.js';
 import { getRandomInt } from '../core/utilities.js';
 import { toggleSolarArray } from '../core/movement.js';
 import { initGame } from '../core/game.js';
+import { logGalaxyEvent } from './factions.js';
 
 export function startCombat(npcShipObject) {
     if (game.inCombatWith) {
@@ -344,7 +345,8 @@ function endCombat(playerWon, outcomeMessage = "") {
 
     } else if (playerWon === false) {
         displayConsoleMessage(outcomeMessage || `Your ship was destroyed by ${targetName}! GAME OVER!`, 'error', 'ship_destroyed');
-        initGame();
+        logGalaxyEvent(`Player ${game.player.firstName} ${game.player.lastName} was destroyed by ${targetName} (${targetFaction}).`, 'conflict');
+        showDeathModal(() => initGame());
         return;
     } else {
         displayConsoleMessage(outcomeMessage || `You disengaged from ${targetName}.`, 'info');

@@ -6,19 +6,27 @@ I will be trying to include a lot of the game features from both and combine the
 web based game. Right now its in early stages and I would like to get a single-player aspect completed
 before adding any multiplayer aspect.
 
-What I want in the game:
-- Port Trading
-- Sector navigation
-- Events
-- Planets
-- Robbing/Stealing
-- Combat
-- Different ships
-- Fighters/Mines/Missiles
-- This will be a minimalistic game, so no heavy graphics and will try to capture the feel of the older games
-- I am not an ASCII artist so I will do the best I can ;)
-- A good saving mechanism while testing in single player mode
-- More to come.....
+Current Game Features:
+- **Port Trading**: Buy/sell commodities (ore, food, tech) and exotics (minerals, organics, artifacts) with dynamic prices
+- **Sector Navigation**: 50x100 galaxy grid with fuel-based movement
+- **Economic Events**: Boom/bust cycles, strikes, and price fluctuations with profit guarantees
+- **Planets**: Procedural generation, scanning (1 fuel), mining (5 fuel), claiming, colonization, invasion
+- **Combat System**: Ship-to-ship battles with fighters, missiles, mines, shields, and hull damage
+- **NPC AI**: Autonomous faction ships that trade profitably (+3-4M credits net), mine planets, upgrade equipment
+- **Ship Classes**: 15+ ships across 3 factions with upgradeable systems (hull, shields, weapons, scanners, warp)
+- **Banking**: Interest-bearing accounts with PIN security
+- **Faction System**: Traders, Duran, Vinari with territories and relationships
+- **Port Ownership**: Capture ports for trading advantages and defense
+- **Lottery**: Random credit rewards
+- **Rankings**: Power-based leaderboards
+- **Accessibility**: Text-to-speech support
+
+Advanced Mechanics:
+- **NPC Trading**: Strategic buy-low-sell-high with full inventory management
+- **Dynamic Economy**: Price clamps ensure profitable trading (sell ≤ buy prices)
+- **Equipment Upgrades**: 40-60% success rates at spaceports
+- **Planet Mining**: Resource extraction with fuel costs
+- **Faction AI**: Upgrade priorities (Duran: combat, Vinari: tech, Traders: cargo)
 
 Things I would like in the game but not sure if I can make it happen:
 - Port-to-Port trading mechanism (like a script)

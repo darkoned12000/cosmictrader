@@ -1,6 +1,6 @@
 // --- Mechanics Module Imports ---
 import { game } from '../core/state.js';
-import { displayConsoleMessage, updateUI } from './ui.js';
+import { displayConsoleMessage, updateUI, showDeathModal } from './ui.js';
 import { playSoundEffect } from './audio.js';
 import { logGalaxyEvent } from './factions.js';
 import { initGame } from '../core/game.js';
@@ -85,7 +85,7 @@ export function handleHazardEntry(sector) {
     if (game.player.ship.hull <= 0) {
         logGalaxyEvent(`Your ship, "${game.player.ship.name}", was destroyed by a ${hazardType}!`, 'error');
         displayConsoleMessage("CRITICAL HULL FAILURE! SHIP DESTROYED! GAME OVER!", 'error', 'ship_destroyed');
-        initGame(); // Restart the game
+        showDeathModal(() => initGame()); // Show death modal then restart
     } else {
        updateUI(); // Update UI if ship is still alive
     }

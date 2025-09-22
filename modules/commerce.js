@@ -6,6 +6,7 @@ import { playSoundEffect } from './audio.js';
 import { getRandomElement, getRandomInt } from '../core/utilities.js';
 import { FACTION_DURAN, FACTION_VINARI } from '../data/naming-data.js';
 import { equipmentCosts, scannerModels, exoticPrices, shipClasses, commodities } from '../data/game-data.js';
+import { saveGame } from '../core/game.js';
 
 export function trade(action, commodity, quantityToTransact = 1) { // quantityToTransact added, defaults to 1
     const sector = game.map[`${game.player.x},${game.player.y}`];
@@ -17,7 +18,13 @@ export function trade(action, commodity, quantityToTransact = 1) { // quantityTo
     }
 
     const portData = sector.data;
-    let price = portData.prices[commodity]; // Price is now fixed for this transaction based on port's current price
+    // Use appropriate price based on action
+    let price;
+    if (action === 'buy') {
+        price = portData.sell_prices ? portData.sell_prices[commodity] : portData.prices[commodity];
+    } else {
+        price = portData.buy_prices ? portData.buy_prices[commodity] : portData.prices[commodity];
+    }
     const isPlayerOwned = portData.owner === game.player.name;
     let effectivePrice = price;
 	const currentCargoTotal = Object.values(game.player.inventory).reduce((a, b) => a + b, 0);
@@ -99,6 +106,7 @@ export function trade(action, commodity, quantityToTransact = 1) { // quantityTo
 
             displayConsoleMessage(`Bought ${actualQuantityToBuy} unit(s) of ${commodity} for ${totalCost} cr. ${isPlayerOwned ? '(10% owner discount applied)' : ''}`, 'success');
             sound = 'trade_buy';
+            game.player.hasMovedThisTurn = true; // Trading counts as an action
         } else {
             // This case handles if all adjustments led to 0 quantity (e.g. full cargo, no stock, no money)
             // Specific messages are already displayed above.
@@ -160,6 +168,7 @@ export function trade(action, commodity, quantityToTransact = 1) { // quantityTo
 
             displayConsoleMessage(`Sold ${actualQuantityToSell} unit(s) of ${commodity} for ${totalGain} cr. ${isPlayerOwned ? '(10% owner bonus applied)' : ''}`, 'success');
             sound = 'trade_sell';
+            game.player.hasMovedThisTurn = true; // Trading counts as an action
         } else {
             // This case handles if all adjustments led to 0 quantity
         }
@@ -180,7 +189,10 @@ export function handleTradeAll(action, commodity) {
     }
 
     const portData = sector.data;
-    const price = portData.prices[commodity];
+    // Use appropriate price based on action
+    const price = action === 'buy'
+        ? (portData.sell_prices ? portData.sell_prices[commodity] : portData.prices[commodity])
+        : (portData.buy_prices ? portData.buy_prices[commodity] : portData.prices[commodity]);
     const playerInventory = game.player.inventory;
     const shipCargoCapacity = game.player.ship.cargoSpace;
     const currentCargoTotal = Object.values(playerInventory).reduce((a, b) => a + b, 0);
@@ -229,75 +241,9 @@ export function handleTradeAll(action, commodity) {
 }
 
 
-export function buyFuel() {
-    const input = document.getElementById('buy-fuel-amount')?.value;
-    const amountToBuy = parseInt(input, 10);
 
-    if (isNaN(amountToBuy) || amountToBuy <= 0) {
-        displayConsoleMessage("Enter a positive number of fuel units to buy.", 'error');
-        playSoundEffect('error');
-        return;
-    }
 
-    const costPerUnit = equipmentCosts.fuel.unitCost;
-    const maxCanHold = game.player.ship.maxFuel - game.player.ship.fuel;
-    const actualAmountToBuy = Math.min(amountToBuy, maxCanHold);
-    const totalCost = Math.ceil(actualAmountToBuy * costPerUnit);
 
-    if (actualAmountToBuy <= 0) {
-        displayConsoleMessage("Fuel tank is already full!", 'error');
-        playSoundEffect('error');
-        return;
-    }
-
-    if (game.player.credits < totalCost) {
-        displayConsoleMessage(`Insufficient credits. Need ${totalCost} cr to buy ${actualAmountToBuy} fuel.`, 'error');
-        playSoundEffect('error');
-        return;
-    }
-
-    game.player.credits -= totalCost;
-    game.player.ship.fuel += actualAmountToBuy;
-
-    displayConsoleMessage(`Bought ${actualAmountToBuy} fuel for ${totalCost} cr.`);
-    playSoundEffect('trade_buy'); // Use a success sound for buying
-    updateUI();
-}
-
-export function buyEquipment(type) {
-    const itemInfo = equipmentCosts[type];
-    if (!itemInfo) {
-        displayConsoleMessage(`Unknown equipment type: ${type}`, 'error');
-        return;
-    }
-
-    const currentAmount = game.player.ship[type] || 0;
-    const maxCapacity = game.player.ship[itemInfo.max] !== undefined ? game.player.ship[itemInfo.max] : Infinity;
-
-    if (currentAmount >= maxCapacity) {
-        displayConsoleMessage(`${type[0].toUpperCase() + type.slice(1)} is already at maximum capacity!`, 'error');
-        playSoundEffect('error');
-        return;
-    }
-
-    const cost = itemInfo.cost;
-    if (game.player.credits < cost) {
-        displayConsoleMessage(`Insufficient credits. Need ${cost} cr to buy ${type}.`, 'error');
-        playSoundEffect('error');
-        return;
-    }
-
-    game.player.credits -= cost;
-    if (game.player.ship[type] === undefined) {
-        game.player.ship[type] = 0;
-    }
-    game.player.ship[type] += itemInfo.amount;
-    game.player.ship[type] = Math.min(game.player.ship[type], maxCapacity); // Ensure we don't exceed max
-
-    displayConsoleMessage(`Bought +${itemInfo.amount} ${type}!`);
-    playSoundEffect('upgrade'); // Use upgrade sound for equipment
-    updateUI();
-}
 
 
 export function handleSellExotic(resourceName) {
@@ -342,59 +288,9 @@ export function handleSellAllExotic(resourceName) {
 }
 
 
-export function upgradeScanner(model) {
-    const scannerInfo = scannerModels[model];
-    if (!scannerInfo) {
-        displayConsoleMessage(`Unknown scanner model: ${model}`, 'error');
-        return;
-    }
-    // Prevent buying the same or lower model
-    if (scannerModels[game.player.ship.scanner.model].range >= scannerInfo.range) {
-        displayConsoleMessage(`Already have ${game.player.ship.scanner.model} or better scanner.`, 'error');
-        playSoundEffect('error');
-        return;
-    }
 
 
-    const cost = scannerInfo.cost;
-    if (game.player.credits < cost) {
-        displayConsoleMessage(`Insufficient credits. Need ${cost} cr to buy ${model} Scanner.`, 'error');
-        playSoundEffect('error');
-        return;
-    }
 
-    game.player.credits -= cost;
-    game.player.ship.scanner = { model, range: scannerInfo.range };
-
-    displayConsoleMessage(`Upgraded to ${model} Scanner!`);
-    playSoundEffect('upgrade');
-    updateUI();
-}
-
-export function buyWarpDrive() {
-    const cost = 5000;
-    if (game.player.ship.warpDrive === 'Installed') {
-        displayConsoleMessage("Warp Drive is already installed.", 'error');
-        playSoundEffect('error');
-        return;
-    }
-
-    if (game.player.credits < cost) {
-        displayConsoleMessage(`Insufficient credits. Need ${cost} cr to install Warp Drive.`, 'error');
-        playSoundEffect('error');
-        return;
-    }
-
-    if (confirm(`Install Warp Drive for ${cost}cr?`)) {
-        game.player.credits -= cost;
-        game.player.ship.warpDrive = 'Installed';
-        displayConsoleMessage('Warp Drive installed!');
-        playSoundEffect('upgrade');
-        updateUI();
-    } else {
-         displayConsoleMessage("Warp Drive installation cancelled.");
-    }
-}
 
 export function calculateTradeIn(newClass) {
     const newShip = shipClasses[newClass];
@@ -451,54 +347,7 @@ export function calculateTradeIn(newClass) {
     return { totalTradeIn: totalTradeIn, netCost: netCost };
 }
 
-export function buyShip(newClass) {
-    const newShipStats = shipClasses[newClass];
-    if (!newShipStats) {
-        displayConsoleMessage(`Unknown ship class: ${newClass}`, 'error');
-        return;
-    }
 
-    const { totalTradeIn, netCost } = calculateTradeIn(newClass);
-
-    if (game.player.credits < netCost) {
-        displayConsoleMessage(`Insufficient credits. Need ${netCost} cr to buy the ${newClass}.`, 'error');
-        playSoundEffect('error');
-        return;
-    }
-
-    const currentCargoTotal = Object.values(game.player.inventory).reduce((a, b) => a + b, 0);
-    let confirmMessage = `Trade your ${game.player.class} for a ${newClass}?\nNet Cost: ${netCost} cr`;
-
-    if (currentCargoTotal > newShipStats.cargoSpace) {
-        confirmMessage += `\nWarning: You have ${currentCargoTotal} cargo, but the ${newClass} only has ${newShipStats.maxCargoSpace} space.\nExcess cargo will be jettisoned.`;
-    }
-    confirmMessage += "\nConfirm purchase?";
-
-
-    if (confirm(confirmMessage)) {
-        game.player.credits -= netCost;
-        game.player.class = newClass;
-
-        // Copy ship properties from the new class definition
-        // IMPORTANT: Preserve the player's *current* computer level if it's higher than the new ship's base level
-        const currentComputerLevel = game.player.ship.computerLevel || 1;
-        game.player.ship = { ...newShipStats };
-        // Ensure the new ship has at least the player's current computer level (if player upgraded it)
-        game.player.ship.computerLevel = Math.max(newShipStats.computerLevel || 1, currentComputerLevel);
-
-
-        if (currentCargoTotal > newShipStats.cargoSpace) {
-            game.player.inventory = { ore: 0, food: 0, tech: 0 }; // Jettison all cargo
-            displayConsoleMessage(`Bought ${newClass}! Excess cargo jettisoned.`);
-        } else {
-            displayConsoleMessage(`Bought ${newClass}! Enjoy your new ship.`);
-        }
-        playSoundEffect('ship_bought');
-        updateUI(); // Update UI with new ship stats and potentially empty inventory
-    } else {
-        displayConsoleMessage("Ship purchase cancelled.");
-    }
-}
 
 
 export function upgradePort() {
@@ -579,6 +428,7 @@ export function upgradePort() {
 
     displayConsoleMessage(`Port upgraded! Capacity increased by O:+${oreIncrease}, F:+${foodIncrease}, T:+${techIncrease}. Cost: ${totalCost} cr.`);
     playSoundEffect('upgrade');
+    game.player.hasMovedThisTurn = true; // Upgrading port counts as an action
     updateUI(); // Update UI to show new capacity and stock
 }
 
@@ -644,6 +494,7 @@ export function attemptStealResources() {
 
         if (stolenGoodsMessages.length > 0) {
             displayConsoleMessage(`Success! Pilfered: ${stolenGoodsMessages.join(', ')}!`, 'success', 'trade_buy');
+            game.player.hasMovedThisTurn = true; // Successful stealing counts as an action
         } else {
             displayConsoleMessage("Success... but the port had no vulnerable resources or you couldn't carry more.", 'minor');
         }
@@ -701,6 +552,7 @@ export function attemptStealResources() {
             }
         }
         displayConsoleMessage(penaltyMessages.join(' '), 'error', 'hack_fail'); // Using hack_fail sound for penalty
+        game.player.hasMovedThisTurn = true; // Failed stealing still counts as an action
     }
     updateUI(); // Always update UI after an attempt
 }
@@ -741,10 +593,12 @@ export function attemptHackPort() {
         portData.credits = Math.max(0, portData.credits - stolenCredits); // Port loses credits, ensure not negative
         displayConsoleMessage(`Success! Siphoned ${stolenCredits} credits!`);
         playSoundEffect('hack_success');
+        game.player.hasMovedThisTurn = true; // Hacking counts as an action
     } else {
         // Hack Failed
         displayConsoleMessage("Hack Failed! Access denied.");
         playSoundEffect('hack_fail');
+        game.player.hasMovedThisTurn = true; // Failed hacking still counts as an action
 
         // --- Virus Infection Logic ---
         // Calculate the chance of getting a virus based on security difference
@@ -827,6 +681,7 @@ export function upgradePortSecurity() {
         portData.securityLevel = targetLevel;
         displayConsoleMessage(`Port security upgraded to level ${targetLevel}!`);
         playSoundEffect('upgrade');
+        game.player.hasMovedThisTurn = true; // Upgrading port security counts as an action
         updateUI(); // Update UI to show new security level
     } else {
         displayConsoleMessage("Port security upgrade cancelled.");
@@ -898,6 +753,7 @@ export function attemptPurchasePort() {
             portData.purchasePrice = price;    // Store the price it was bought for (for game history/data)
 
             displayConsoleMessage(`Congratulations! You are now the proud owner of ${portData.name}! You receive a 10% discount on trades and services here.`, 'success', 'ship_bought');
+            game.player.hasMovedThisTurn = true; // Purchasing a port counts as an action
             updateUI();
         } else {
             // Message Change: "Insufficient credit balance."
@@ -928,6 +784,7 @@ export function payForTip() {
 
     game.player.credits -= tipCost;
     playSoundEffect('trade_sell'); // Sound for spending credits
+    game.player.hasMovedThisTurn = true; // Paying for tips counts as an action
 
     const tips = [
         "Heard tech pays well near Zarg.",
@@ -983,6 +840,7 @@ export function upgradeSoftware() {
         game.player.ship.computerLevel = currentLevel + 1;
         displayConsoleMessage(`Computer software upgraded to level ${game.player.ship.computerLevel}!`);
         playSoundEffect('upgrade');
+        game.player.hasMovedThisTurn = true; // Upgrading software counts as an action
         updateUI(); // Update UI to show new computer level
     } else {
          displayConsoleMessage("Software upgrade cancelled.");
@@ -1017,6 +875,7 @@ export function removeViruses() {
         game.player.viruses = []; // Clear the viruses array
         displayConsoleMessage("Ship's systems cleaned. Viruses removed.");
         playSoundEffect('virus_clean');
+        game.player.hasMovedThisTurn = true; // Removing viruses counts as an action
         updateUI(); // Update UI to reflect no viruses
     } else {
          displayConsoleMessage("Virus removal cancelled.");
@@ -1036,3 +895,196 @@ export function handleEditShipName() {
         displayConsoleMessage("Ship name change cancelled.", "info");
     }
 }
+
+// --- BUY FUNCTIONS FOR SPACE PORTS ---
+
+export function buyFuel(amount = null) {
+    const sector = game.map[`${game.player.x},${game.player.y}`];
+    if (!sector || sector.type !== 'spacePort') {
+        displayConsoleMessage("Fuel purchases are only available at Space Ports.", 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    if (!amount) {
+        const input = document.getElementById('buy-fuel-amount');
+        amount = input ? parseInt(input.value) : 100;
+    }
+
+    if (isNaN(amount) || amount <= 0) {
+        displayConsoleMessage("Invalid fuel amount.", 'error');
+        return;
+    }
+
+    const costPerUnit = equipmentCosts.fuel.unitCost;
+    const totalCost = amount * costPerUnit;
+    const currentFuel = game.player.ship.fuel;
+    const maxFuel = game.player.ship.maxFuel;
+    const canBuy = Math.min(amount, maxFuel - currentFuel);
+
+    if (canBuy <= 0) {
+        displayConsoleMessage("Fuel tanks are full.", 'warning');
+        playSoundEffect('error');
+        return;
+    }
+
+    const actualAmount = canBuy;
+    const actualCost = actualAmount * costPerUnit;
+
+    if (game.player.credits < actualCost) {
+        displayConsoleMessage(`Insufficient credits. Need ${actualCost} cr for ${actualAmount} fuel.`, 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    game.player.credits -= actualCost;
+    game.player.ship.fuel += actualAmount;
+    displayConsoleMessage(`Purchased ${actualAmount} fuel for ${actualCost} cr.`, 'success');
+    playSoundEffect('trade_buy');
+    game.player.hasMovedThisTurn = true; // Buying fuel counts as an action
+    updateUI();
+}
+
+export function buyEquipment(type) {
+    const sector = game.map[`${game.player.x},${game.player.y}`];
+    if (!sector || sector.type !== 'spacePort') {
+        displayConsoleMessage("Equipment purchases are only available at Space Ports.", 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    const item = equipmentCosts[type];
+    if (!item) {
+        displayConsoleMessage("Invalid equipment type.", 'error');
+        return;
+    }
+
+    const current = game.player.ship[type] || 0;
+    const max = game.player.ship[item.max] !== undefined ? game.player.ship[item.max] : Infinity;
+
+    if (current >= max) {
+        displayConsoleMessage(`${type} is already at maximum.`, 'warning');
+        playSoundEffect('error');
+        return;
+    }
+
+    if (game.player.credits < item.cost) {
+        displayConsoleMessage(`Insufficient credits. Need ${item.cost} cr for ${type}.`, 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    game.player.credits -= item.cost;
+    game.player.ship[type] = (game.player.ship[type] || 0) + item.amount;
+    displayConsoleMessage(`Purchased ${type} for ${item.cost} cr.`, 'success');
+    playSoundEffect('trade_buy');
+    game.player.hasMovedThisTurn = true; // Buying equipment counts as an action
+    updateUI();
+}
+
+export function upgradeScanner(model) {
+    const sector = game.map[`${game.player.x},${game.player.y}`];
+    if (!sector || sector.type !== 'spacePort') {
+        displayConsoleMessage("Scanner upgrades are only available at Space Ports.", 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    const scannerData = scannerModels[model];
+    if (!scannerData) {
+        displayConsoleMessage("Invalid scanner model.", 'error');
+        return;
+    }
+
+    if (game.player.ship.scanner.model === model) {
+        displayConsoleMessage(`Scanner is already ${model}.`, 'warning');
+        return;
+    }
+
+    if (game.player.credits < scannerData.cost) {
+        displayConsoleMessage(`Insufficient credits. Need ${scannerData.cost} cr for ${model} scanner.`, 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    game.player.credits -= scannerData.cost;
+    game.player.ship.scanner = { model, range: scannerData.range };
+    displayConsoleMessage(`Upgraded scanner to ${model} for ${scannerData.cost} cr.`, 'success');
+    playSoundEffect('trade_buy');
+    updateUI();
+}
+
+export function buyWarpDrive() {
+    const sector = game.map[`${game.player.x},${game.player.y}`];
+    if (!sector || sector.type !== 'spacePort') {
+        displayConsoleMessage("Warp drive installation is only available at Space Ports.", 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    const cost = 5000;
+    if (game.player.ship.warpDrive === 'Installed') {
+        displayConsoleMessage("Warp drive is already installed.", 'warning');
+        return;
+    }
+
+    if (game.player.credits < cost) {
+        displayConsoleMessage(`Insufficient credits. Need ${cost} cr for warp drive.`, 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    game.player.credits -= cost;
+    game.player.ship.warpDrive = 'Installed';
+    displayConsoleMessage(`Installed warp drive for ${cost} cr.`, 'success');
+    playSoundEffect('trade_buy');
+    updateUI();
+}
+
+export function buyShip(shipClass) {
+    const sector = game.map[`${game.player.x},${game.player.y}`];
+    if (!sector || sector.type !== 'spacePort') {
+        displayConsoleMessage("Ship purchases are only available at Space Ports.", 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    const shipData = shipClasses[shipClass];
+    if (!shipData) {
+        displayConsoleMessage("Invalid ship class.", 'error');
+        return;
+    }
+
+    const { totalTradeIn, netCost } = calculateTradeIn(shipClass);
+    if (game.player.credits < netCost) {
+        displayConsoleMessage(`Insufficient credits. Need ${netCost} cr for ${shipClass}.`, 'error');
+        playSoundEffect('error');
+        return;
+    }
+
+    // Buy new ship
+    game.player.credits -= netCost;
+    game.player.class = shipClass;
+    game.player.hasMovedThisTurn = true; // Buying a ship counts as an action
+
+    // Copy ship properties from the new class definition
+    // IMPORTANT: Preserve the player's *current* computer level if it's higher than the new ship's base level
+    const currentComputerLevel = game.player.ship.computerLevel || 1;
+    game.player.ship = { ...shipClasses[shipClass] };
+    // Ensure the new ship has at least the player's current computer level (if player upgraded it)
+    game.player.ship.computerLevel = Math.max(shipClasses[shipClass].computerLevel || 1, currentComputerLevel);
+
+    const currentCargoTotal = Object.values(game.player.inventory).reduce((a, b) => a + b, 0);
+    if (currentCargoTotal > shipClasses[shipClass].cargoSpace) {
+        game.player.inventory = { ore: 0, food: 0, tech: 0 }; // Jettison all cargo
+        displayConsoleMessage(`Purchased ${shipClass} for ${netCost} cr (trade-in: +${totalTradeIn} cr). Excess cargo jettisoned.`, 'success');
+    } else {
+        displayConsoleMessage(`Purchased ${shipClass} for ${netCost} cr (trade-in: +${totalTradeIn} cr).`, 'success');
+    }
+    playSoundEffect('trade_buy');
+    updateUI();
+}
+
+
+
+

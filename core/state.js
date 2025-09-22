@@ -44,6 +44,8 @@ export const game = {
 	solarArrayDeployed: false,
     solarArrayIntervalId: null,
     simulationIntervalId: null,
+    dockingStats: {}, // Track NPC docking visits by faction
+    tradingStats: {}, // Track NPC trading activities by faction
     isSimulationRunning: false,
     nextEconomicEventTurn: 0,
     saveData: {}, // For persistent data like bank accounts
@@ -64,6 +66,9 @@ export const game = {
         lastPlayPeriodResetMoveCount: 0 // Tracks move count at last reset
     }
 };
+
+// Expose game to window for debugging and testing
+window.game = game;
 
 // UI object will be initialized after DOM is loaded
 export let ui = {};

@@ -404,6 +404,10 @@ export const equipmentCosts = {
     fuel: { cost: 50, amount: 100, unitCost: 0.5 }
 };
 
+// --- Planet Action Costs ---
+export const PLANET_SCAN_COST = 1;
+export const PLANET_MINE_COST = 5;
+
 // -- Commodities and stuff to sell at SpacePorts --
 export const commodities = ['ore', 'food', 'tech'];
 export const exoticPrices = { minerals: 250, organics: 500, artifacts: 5000 };

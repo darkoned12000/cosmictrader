@@ -68,12 +68,16 @@ export function processFactionIncomeAndBuilding() {
     for (const faction of [FACTION_DURAN, FACTION_VINARI, FACTION_TRADER]) {
         if (!game.factions[faction]) continue;
 
-        // Income Generation
-        const income = (faction === FACTION_TRADER) ? 10000 * (game.factions[faction].ships.length || 1) : 5000 * (game.factions[faction].territory || 1);
+        // Income Generation - Balanced system with diminishing returns
+        const baseIncome = 5000; // Base income for all factions
+        const shipBonus = Math.min(1500, 1000 * (game.factions[faction].ships.length || 1)); // Diminishing bonus per ship
+        const territoryBonus = Math.min(4000, 2000 * (game.factions[faction].territory || 1)); // Diminishing bonus per territory
+        const income = baseIncome + shipBonus + territoryBonus;
         game.factions[faction].credits += income;
+        console.log(`[FACTION INCOME] ${faction}: +${income}cr (ships: ${game.factions[faction].ships.length}, territory: ${game.factions[faction].territory})`);
 
-        // Ship Commissioning (Duran & Vinari only for combat ships)
-        if (faction !== FACTION_TRADER && game.factions[faction].credits > 100000 && Math.random() < 0.4) {
+        // Ship Commissioning (All factions can build ships, but it's expensive and rare)
+        if (game.factions[faction].credits > 75000 && Math.random() < 0.15) {
             let x, y, key, attempts = 0;
             do {
                 x = getRandomInt(0, game.mapWidth - 1); y = getRandomInt(0, game.mapHeight - 1); key = `${x},${y}`; attempts++;
@@ -96,6 +100,7 @@ export function processFactionIncomeAndBuilding() {
                         const msg = `The ${faction} have commissioned a new ${newShip.ship_class}, the ${newShip.ship_name}!`;
                         displayConsoleMessage(`[FACTION NEWS] ${msg}`, "faction");
                         logGalaxyEvent(msg, "faction");
+                        console.log(`[SHIP BUILDING] ${faction} built ${newShip.ship_class}: ${newShip.ship_name} at ${x},${y}`);
                     }
                 }
             }

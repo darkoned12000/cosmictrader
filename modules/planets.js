@@ -6,6 +6,7 @@ import { displayConsoleMessage, updateUI } from './ui.js';
 import { playSoundEffect } from './audio.js';
 import { getRandomInt } from '../core/utilities.js';
 import { logGalaxyEvent } from './factions.js';
+import { PLANET_SCAN_COST, PLANET_MINE_COST } from '../data/game-data.js';
 
 // Generates the flavor text description for a planet
 export function generatePlanetDescription(planet) {
@@ -39,11 +40,12 @@ export function generatePlanetDescription(planet) {
 // --- Action Handler Functions ---
 
 export function handleScanPlanet() {
-    const scanCost = 5;
+    const scanCost = PLANET_SCAN_COST;
     if (game.player.ship.fuel >= scanCost) {
         game.player.ship.fuel -= scanCost;
         const planetToScan = game.map[`${game.player.x},${game.player.y}`].data;
         planetToScan.isScanned = true;
+        game.player.hasMovedThisTurn = true; // Scanning counts as an action
         displayConsoleMessage(`Detailed scan of ${planetToScan.name} complete. Sector data updated.`, "success");
         playSoundEffect('upgrade');
         updateUI();
@@ -76,7 +78,7 @@ export function handleMinePlanet() {
     }
 
     // STEP 3: Check for fuel and cargo space.
-    const mineCost = 10;
+    const mineCost = PLANET_MINE_COST;
     if (game.player.ship.fuel < mineCost) {
         displayConsoleMessage(`Not enough fuel for a mining expedition. Requires ${mineCost} fuel.`, "error");
         return;
@@ -92,6 +94,7 @@ export function handleMinePlanet() {
 
     // STEP 4: Proceed with mining now that all checks have passed.
     game.player.ship.fuel -= mineCost;
+    game.player.hasMovedThisTurn = true; // Mining counts as an action
 
     let foundSomething = false;
     let messages = [];

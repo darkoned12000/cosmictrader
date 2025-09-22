@@ -6,8 +6,8 @@ Cosmic Trader is a JavaScript-based web game that simulates space trading, explo
 
 *   **Dynamic Galaxy Map:** Explore a vast galaxy with procedurally generated stars, planets, ports, spaceports, and hazards.
 *   **Ship Management:** Upgrade ship components (hull, shields, fuel, cargo, weapons, scanner, warp drive), manage inventory, and monitor ship status.
-*   **Economic Simulation:** Engage in trade with fluctuating commodity prices influenced by galactic economic events. Ports have varying supply/demand and security levels.
-*   **Faction System:** Interact with three main factions (Duran Hegemony, Vinari Collective, Independent Traders Guild), each with unique lore, motivations, and relationships. NPCs from these factions roam the galaxy.
+*   **Economic Simulation:** Engage in trade with fluctuating commodity prices influenced by galactic economic events. Ports have varying supply/demand and security levels. NPCs autonomously trade for profits (+3-4M credits net), buying low and selling high with optimized AI.
+*   **Faction System:** Interact with three main factions (Duran Hegemony, Vinari Collective, Independent Traders Guild), each with unique lore, motivations, and relationships. NPCs from these factions roam the galaxy with faction-specific upgrade priorities (Duran: combat, Vinari: tech, Traders: cargo).
 *   **Combat System:** Engage in turn-based combat with NPC ships and installations, utilizing various ship weapons and defenses.
 *   **Planetary Interaction:** Scan, mine, claim, colonize, or invade planets.
 *   **Audio System:** Background music themes and sound effects enhance the gameplay experience.
@@ -61,7 +61,7 @@ Then open `http://localhost:8000` in your browser.
 
 *   **Movement:** Player moves one sector at a time, consuming fuel. Warp drive allows faster travel at higher fuel cost.
 *   **Combat:** Turn-based, with player and NPC ships having hull, shields, fighters, and missiles.
-*   **Economy:** Ports have dynamic prices and stock. NPCs also participate in economic cycles.
+*   **Economy:** Ports have dynamic prices and stock with price clamps ensuring profitable trading. NPCs participate in economic cycles, mining planets, and upgrading equipment (40-60% success rates).
 *   **Factions:** Factions have territories, fleets, and engage in actions like invasions or economic sabotage.
 *   **Viruses:** Negative status effects that can be acquired and removed.
 *   **Solar Array:** A deployable component to passively recharge fuel.

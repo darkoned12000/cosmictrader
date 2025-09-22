@@ -14,7 +14,11 @@ const ECONOMIC_EVENTS = [
     duration: () => getRandomInt(50, 100),
     startMessage: "Galactic News: A major agricultural blight has caused widespread food shortages! Food prices are spiking.",
     endMessage: "Trade Update: New harvests have arrived from the outer colonies, stabilizing food prices.",
-    effect: (port) => { port.prices.food = Math.min(500, port.prices.food + getRandomInt(20, 40)); }
+     effect: (port) => {
+         if (port.sell_prices) port.sell_prices.food = Math.min(80, port.sell_prices.food + getRandomInt(5, 15));
+         if (port.buy_prices) port.buy_prices.food = Math.min(160, port.buy_prices.food + getRandomInt(10, 25));
+         if (port.prices) port.prices.food = Math.min(500, port.prices.food + getRandomInt(20, 40));
+     }
 },
 {
     name: "Tech Boom",
@@ -23,7 +27,11 @@ const ECONOMIC_EVENTS = [
     duration: () => getRandomInt(40, 80),
     startMessage: "Market News: A breakthrough in micro-fusion technology has flooded the market! Tech prices are plummeting.",
     endMessage: "Market Analysis: The tech surplus has been bought up by corporate interests. Prices are returning to normal levels.",
-    effect: (port) => { port.prices.tech = Math.max(10, port.prices.tech - getRandomInt(15, 30)); }
+     effect: (port) => {
+         if (port.sell_prices) port.sell_prices.tech = Math.max(90, port.sell_prices.tech - getRandomInt(5, 15));
+         if (port.buy_prices) port.buy_prices.tech = Math.max(190, port.buy_prices.tech - getRandomInt(15, 35));
+         if (port.prices) port.prices.tech = Math.max(10, port.prices.tech - getRandomInt(15, 30));
+     }
 },
 {
     name: "Mining Strike",
@@ -32,7 +40,11 @@ const ECONOMIC_EVENTS = [
     duration: () => getRandomInt(60, 120),
     startMessage: "Labor Alert: A widespread miners' strike has halted ore production on several key worlds. Ore prices are soaring.",
     endMessage: "Labor Update: The miners' union has reached an agreement. Ore production is resuming, and prices are stabilizing.",
-    effect: (port) => { port.prices.ore = Math.min(500, port.prices.ore + getRandomInt(15, 25)); }
+     effect: (port) => {
+         if (port.sell_prices) port.sell_prices.ore = Math.min(500, port.sell_prices.ore + getRandomInt(15, 25));
+         if (port.buy_prices) port.buy_prices.ore = Math.min(500, port.buy_prices.ore + getRandomInt(15, 25));
+         if (port.prices) port.prices.ore = Math.min(500, port.prices.ore + getRandomInt(15, 25));
+     }
 },
 {
     name: "Pirate Raids",
@@ -42,9 +54,21 @@ const ECONOMIC_EVENTS = [
     startMessage: "Security Alert: Increased pirate activity is disrupting major trade routes! All commodity prices are becoming volatile.",
     endMessage: "Security Update: Coordinated patrols have driven pirates from the trade routes. Shipping prices are returning to normal.",
     effect: (port) => {
-        port.prices.ore += getRandomInt(-25, 25);
-        port.prices.food += getRandomInt(-25, 25);
-        port.prices.tech += getRandomInt(-25, 25);
+        if (port.sell_prices) {
+            port.sell_prices.ore += getRandomInt(-25, 25);
+            port.sell_prices.food += getRandomInt(-25, 25);
+            port.sell_prices.tech += getRandomInt(-25, 25);
+        }
+        if (port.buy_prices) {
+            port.buy_prices.ore += getRandomInt(-25, 25);
+            port.buy_prices.food += getRandomInt(-25, 25);
+            port.buy_prices.tech += getRandomInt(-25, 25);
+        }
+        if (port.prices) {
+            port.prices.ore += getRandomInt(-25, 25);
+            port.prices.food += getRandomInt(-25, 25);
+            port.prices.tech += getRandomInt(-25, 25);
+        }
     }
 },
 {
@@ -54,7 +78,11 @@ const ECONOMIC_EVENTS = [
     duration: () => getRandomInt(50, 90),
     startMessage: "Galactic News: The Duran Hegemony’s forges on Krythos are overproducing! Ore floods the market, slashing prices!",
     endMessage: "Market Update: Duran warlords have redirected ore to their armadas. Ore prices stabilize as supply tightens.",
-    effect: (port) => { port.prices.ore = Math.max(10, port.prices.ore - getRandomInt(20, 35)); }
+     effect: (port) => {
+         if (port.sell_prices) port.sell_prices.ore = Math.max(10, port.sell_prices.ore - getRandomInt(20, 35));
+         if (port.buy_prices) port.buy_prices.ore = Math.max(10, port.buy_prices.ore - getRandomInt(20, 35));
+         if (port.prices) port.prices.ore = Math.max(10, port.prices.ore - getRandomInt(20, 35));
+     }
 },
 {
     name: "Vinari Bio-Harvest",
@@ -63,7 +91,11 @@ const ECONOMIC_EVENTS = [
     duration: () => getRandomInt(40, 80),
     startMessage: "Cosmic Broadcast: Vinari bio-engineers on Celestara have unlocked radiant algae blooms! Food prices are crashing galaxy-wide!",
     endMessage: "Trade Report: The Vinari have gifted their surplus to allies, balancing food markets once more.",
-    effect: (port) => { port.prices.food = Math.max(10, port.prices.food - getRandomInt(15, 30)); }
+     effect: (port) => {
+         if (port.sell_prices) port.sell_prices.food = Math.max(10, port.sell_prices.food - getRandomInt(15, 30));
+         if (port.buy_prices) port.buy_prices.food = Math.max(10, port.buy_prices.food - getRandomInt(15, 30));
+         if (port.prices) port.prices.food = Math.max(10, port.prices.food - getRandomInt(15, 30));
+     }
 },
 {
     name: "Trader Tech Heist",
@@ -72,7 +104,11 @@ const ECONOMIC_EVENTS = [
     duration: () => getRandomInt(60, 100),
     startMessage: "Guild Alert: Shady Traders swiped a Vinari tech cache from Vionis! Tech prices are skyrocketing due to shortages!",
     endMessage: "Market News: The Guild cracked down on black-market tech deals. Prices are settling as supplies return.",
-    effect: (port) => { port.prices.tech = Math.min(500, port.prices.tech + getRandomInt(20, 40)); }
+     effect: (port) => {
+         if (port.sell_prices) port.sell_prices.tech = Math.min(500, port.sell_prices.tech + getRandomInt(20, 40));
+         if (port.buy_prices) port.buy_prices.tech = Math.min(500, port.buy_prices.tech + getRandomInt(20, 40));
+         if (port.prices) port.prices.tech = Math.min(500, port.prices.tech + getRandomInt(20, 40));
+     }
 },
 {
     name: "Nebula Flux Crisis",
@@ -82,9 +118,27 @@ const ECONOMIC_EVENTS = [
     startMessage: "Security Warning: A massive Nebula flux is scrambling trade routes! All commodity prices are wildly unstable!",
     endMessage: "Galactic Update: Vinari navigators have mapped safe routes through the Nebula. Trade resumes, stabilizing prices.",
     effect: (port) => {
-        port.prices.ore += getRandomInt(-30, 30);
-        port.prices.food += getRandomInt(-30, 30);
-        port.prices.tech += getRandomInt(-30, 30);
+        if (port.sell_prices) {
+            port.sell_prices.ore += getRandomInt(-30, 30);
+            port.sell_prices.ore = Math.max(15, Math.min(port.sell_prices.ore, 40));
+            port.sell_prices.food += getRandomInt(-30, 30);
+            port.sell_prices.food = Math.max(40, Math.min(port.sell_prices.food, 80));
+            port.sell_prices.tech += getRandomInt(-30, 30);
+            port.sell_prices.tech = Math.max(90, Math.min(port.sell_prices.tech, 160));
+        }
+        if (port.buy_prices) {
+            port.buy_prices.ore += getRandomInt(-30, 30);
+            port.buy_prices.ore = Math.max(45, Math.min(port.buy_prices.ore, 90));
+            port.buy_prices.food += getRandomInt(-30, 30);
+            port.buy_prices.food = Math.max(95, Math.min(port.buy_prices.food, 160));
+            port.buy_prices.tech += getRandomInt(-30, 30);
+            port.buy_prices.tech = Math.max(190, Math.min(port.buy_prices.tech, 350));
+        }
+        if (port.prices) {
+            port.prices.ore += getRandomInt(-30, 30);
+            port.prices.food += getRandomInt(-30, 30);
+            port.prices.tech += getRandomInt(-30, 30);
+        }
     }
 },
 // NEW ECONOMIC EVENTS FOR SHIP EQUIPMENT
@@ -365,8 +419,28 @@ export function updateEconomy() {
     game.ports.forEach(p => {
         commodities.forEach(c => {
             const fluctuation = getRandomInt(-2, 2); // Small, constant "market noise"
-            p.prices[c] += fluctuation;
-            p.prices[c] = Math.max(5, Math.min(p.prices[c], 500)); // Clamp prices
+
+            // Update both sell and buy prices if they exist
+            if (p.sell_prices && p.sell_prices[c] !== undefined) {
+                p.sell_prices[c] += fluctuation;
+                // Keep prices within profitable ranges
+                if (c === 'ore') p.sell_prices[c] = Math.max(15, Math.min(p.sell_prices[c], 40));
+                else if (c === 'food') p.sell_prices[c] = Math.max(40, Math.min(p.sell_prices[c], 80));
+                else if (c === 'tech') p.sell_prices[c] = Math.max(90, Math.min(p.sell_prices[c], 160));
+            }
+            if (p.buy_prices && p.buy_prices[c] !== undefined) {
+                p.buy_prices[c] += fluctuation;
+                // Keep prices within profitable ranges
+                if (c === 'ore') p.buy_prices[c] = Math.max(45, Math.min(p.buy_prices[c], 90));
+                else if (c === 'food') p.buy_prices[c] = Math.max(95, Math.min(p.buy_prices[c], 160));
+                else if (c === 'tech') p.buy_prices[c] = Math.max(190, Math.min(p.buy_prices[c], 350));
+            }
+
+            // Fallback to old prices system for backward compatibility
+            if (p.prices && p.prices[c] !== undefined) {
+                p.prices[c] += fluctuation;
+                p.prices[c] = Math.max(5, Math.min(p.prices[c], 500));
+            }
         });
     });
 }

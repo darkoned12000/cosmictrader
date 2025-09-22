@@ -5,7 +5,7 @@ import { showLoginModal, handleNameSubmit, handleLogin, handleCreatePlayer } fro
 import { initializeUI, ui } from './state.js';
 import { triggerAction } from './actions.js';
 import { restartGame } from './game.js';
-import { displayManual, displayGalaxyLog, displayConsoleMessage } from '../modules/ui.js';
+import { displayManual, displayGalaxyLog, displayDockingStats, displayConsoleMessage } from '../modules/ui.js';
 import { attemptFirstAudioPlay } from '../modules/audio.js';
 import { displayPowerRankings } from '../modules/rankings.js';
 import { toggleSimulation } from './movement.js';
@@ -68,13 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener('keydown', (e) => {
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return; // Ignore keydown if typing in input
-        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'm'].includes(e.key)) e.preventDefault();
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd', 'm', 't'].includes(e.key)) e.preventDefault();
         switch (e.key) {
             case 'ArrowUp': case 'w': triggerAction('move', 'up'); break;
             case 'ArrowDown': case 's': triggerAction('move', 'down'); break;
             case 'ArrowLeft': case 'a': triggerAction('move', 'left'); break;
             case 'ArrowRight': case 'd': triggerAction('move', 'right'); break;
             case 'm': if (!ui.deployMineButton.disabled) triggerAction('deployMine'); else displayConsoleMessage("No mines to deploy.", 'warning'); break;
+            case 'l': displayGalaxyLog(); break; // 'l' key for galaxy log
+            case 'p': displayPowerRankings(); break; // 'p' key for power rankings
+            case 's': displayDockingStats(); break; // 's' key for docking stats
         }
     });
 

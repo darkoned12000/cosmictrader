@@ -87,8 +87,13 @@ export function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', 
     game.stars = [];
     game.hazards = [];
     game.hasMoved = false; game.moveCount = 0;
+    game.player.hasMovedThisTurn = false;
 	game.tradeQuantity = 1;
 	game.tradeMode = 'single'; // 'single', 'multi', 'all'
+
+    // Initialize statistics tracking
+    game.dockingStats = {};
+    game.tradingStats = {};
 
     const totalSectors = game.mapWidth * game.mapHeight;
 
@@ -99,7 +104,8 @@ export function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', 
         type: 'spacePort',
         name: "Starbase Prime",
         owner: "Galactic Authority",
-        prices: { ore: getRandomInt(50, 100), food: getRandomInt(20, 50), tech: getRandomInt(100, 300) },
+                     sell_prices: { ore: getRandomInt(20, 35), food: getRandomInt(50, 75), tech: getRandomInt(100, 150), minerals: getRandomInt(200, 300), organics: getRandomInt(400, 600), artifacts: getRandomInt(4000, 6000) },
+                    buy_prices: { ore: getRandomInt(50, 85), food: getRandomInt(100, 150), tech: getRandomInt(200, 325), minerals: 250, organics: 500, artifacts: 5000 },
         capacity: startPortCapacity,
         stock: { ...startPortCapacity },
         securityLevel: getRandomInt(5, 8),
@@ -201,7 +207,8 @@ export function initGame(isNewPlayerCreation = false, newPlayerName = 'Player', 
                     x, y, type: obj.type, // 'port' or 'spacePort'
                     name: isSpacePort ? getRandomElement(SPACE_PORT_NAMES) :
                         `${getRandomElement(PORT_PREFIXES)} ${getRandomElement(PORT_SUFFIXES)} ${getRandomInt(1, 99)}`,
-                    prices: { ore: getRandomInt(50, 100), food: getRandomInt(20, 50), tech: getRandomInt(100, 300) },
+        sell_prices: { ore: getRandomInt(20, 35), food: getRandomInt(50, 75), tech: getRandomInt(100, 150), minerals: getRandomInt(200, 300), organics: getRandomInt(400, 600), artifacts: getRandomInt(4000, 6000) },
+        buy_prices: { ore: getRandomInt(50, 85), food: getRandomInt(100, 150), tech: getRandomInt(200, 325), minerals: 250, organics: 500, artifacts: 5000 },
                     capacity: portCap,
                     stock: { ...portCap },
                     securityLevel: isSpacePort ? getRandomInt(5, 8) : getRandomInt(0, 2),
